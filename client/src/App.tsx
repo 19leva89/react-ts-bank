@@ -1,43 +1,43 @@
-import { FC, useContext, useState } from "react";
+import { FC, ReactNode, useContext, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthContext, AuthProvider } from "./utils/AuthProvider";
 
-import { BalancePage } from "./component/balance-page";
-import { LoginPage } from "./component/login-page";
-import { NotificationsPage } from "./component/notifications-page";
-import { RecivePage } from "./component/recive-page";
-import { RecoveryConfirmPage } from "./component/recovery-confirm-page";
-import { RecoveryPage } from "./component/recovery-page";
-import { RegisterConfirmPage } from "./component/register-confirm-page";
-import { RegisterPage } from "./component/register-page";
-import { SendPage } from "./component/send-page";
-import { SettingsPage } from "./component/settings-page";
-import { TransactionPage } from "./component/transaction-page";
-import { WelcomePage } from "./component/welcome-page";
-import { Error } from "./component/error";
+import WelcomePage from "./pages/Home";
+import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
+import RegisterConfirmPage from "./pages/RegisterConfirm";
+import RecoveryPage from "./pages/Recovery";
+import RecoveryConfirmPage from "./pages/RecoveryConfirm";
+import BalancePage from "./pages/Balance";
+import SettingsPage from "./pages/Settings";
+import NotificationsPage from "./pages/Notifications";
+import RecivePage from "./pages/Recive";
+import SendPage from "./pages/Send";
+import TransactionPage from "./pages/Transaction";
+import NotFound from "./pages/NotFound";
 
-const AuthRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
+const AuthRoute: FC<{ children: ReactNode }> = ({ children }) => {
   const authContext = useContext(AuthContext);
 
   if (!authContext || !authContext.authState || !authContext.authState.token) {
-    return <BalancePage />;
-  }
-
-  return authContext.authState.token ? <>{children}</> : <LoginPage />;
-};
-
-const PrivateRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
-  const authContext = useContext(AuthContext);
-
-  if (!authContext || !authContext.authState) {
     return <WelcomePage />;
   }
 
-  return authContext.authState.token ? <>{children}</> : <LoginPage />;
+  return authContext.authState.token ? <>{children}</> : <BalancePage />;
+};
+
+const PrivateRoute: FC<{ children: ReactNode }> = ({ children }) => {
+  const authContext = useContext(AuthContext);
+
+  if (!authContext || !authContext.isLogged) {
+    return <LoginPage />;
+  }
+
+  return <>{children}</>;
 };
 
 function App() {
-  const [isLogged, login] = useState(false);
+  const [isLogged, login] = useState(true);
 
   return (
     <AuthProvider>
@@ -139,7 +139,7 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="*" Component={Error} />
+          <Route path="*" Component={NotFound} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -1,14 +1,19 @@
-import React, { createContext, useReducer, ReactNode, Dispatch } from "react";
+import { createContext, useReducer, ReactNode, Dispatch, FC } from "react";
 
 interface AuthState {
   token: string | null;
-  user: any; // Замість 'any' можна використовувати тип користувача
+  user: any;
 }
 
 interface AuthContextProps {
   authState: AuthState;
+  isLogged: boolean;
   login: (token: string, user: any) => void;
   logout: () => void;
+}
+
+interface AuthProviderProps {
+  children: ReactNode;
 }
 
 type AuthAction = { type: "LOGIN"; payload: { token: string; user: any } } | { type: "LOGOUT" };
@@ -39,15 +44,13 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 
 export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [authState, dispatch]: [AuthState, Dispatch<AuthAction>] = useReducer(
     authReducer,
     initialState
   );
+
+  const isLogged = !!authState.token;
 
   const login = (token: string, user: any) => {
     dispatch({ type: "LOGIN", payload: { token, user } });
@@ -59,6 +62,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const authContextData: AuthContextProps = {
     authState,
+    isLogged,
     login,
     logout,
   };

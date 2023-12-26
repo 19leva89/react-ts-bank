@@ -1,0 +1,29 @@
+.field {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	gap: 8px;
+	align-items: stretch;
+}
+
+.field__input {
+	border: 1px solid #ced4da;
+	border-radius: 3px;
+	padding: 10px;
+	font-size: 1em;
+	width: 100%;
+	color: #121212;
+	transition: border-color 0.3s;
+}
+
+.field__input::placeholder {
+	color: #888888;
+}
+
+.field__input:hover {
+	border-color: #ffd100;
+}
+
+.field__input:focus {
+	border-color: #0055a4;
+}
