@@ -1,8 +1,53 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+	background: #1d1d1f;
+	margin: 0;
+	font-family: 'Jost', sans-serif;
+}
+
+#root {
+	width: 393px;
+	height: 852px;
+	border-radius: 24px;
+	background: #fff;
+	position: relative;
+	overflow: hidden;
+}
+
+.background-img {
+	width: 393px;
+	height: 583px;
+	background: linear-gradient(180deg, #5431df 0%, rgba(120, 92, 229, 0) 100%);
+	border-radius: 0px 0px 32px 32px;
+}
+
+.background-safe {
+	position: absolute;
+	top: -8px;
+	right: -307px;
+	width: 900px;
+	height: 900px;
+}
+
+.wrapper__title {
+	position: absolute;
+	top: 87px;
+	left: 143px;
+	color: #fff;
+	font-size: 42px;
+	font-weight: 600;
+	line-height: 100%;
+}
+
+.wrapper__text {
+	position: absolute;
+	top: 141px;
+	left: 102px;
+	color: #fff;
+	font-size: 20px;
+	font-weight: 400;
+	line-height: 100%;
 }
