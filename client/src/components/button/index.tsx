@@ -1,21 +1,18 @@
 import { FC } from "react";
+import { Link } from "react-router-dom";
 import "./style.css";
 
 type ButtonProps = {
   name: string;
   className: string;
-  onClick?: () => void;
+  href: string;
+  onClick: () => void;
 };
 
-export const Button: FC<ButtonProps> = ({ name, className, onClick }) => {
-  const handleClick = () => {
-    console.log("Button clicked");
-    // Ви можете виконати інші дії, що пов'язані з натисканням кнопки тут
-  };
-
+export const Button: FC<ButtonProps> = ({ name, className, href, onClick }) => {
   return (
-    <button type="submit" className={className} onClick={onClick || handleClick}>
-      <span className="header__btn--info">{name}</span>
-    </button>
+    <Link to={href} type="submit" className={className} onClick={onClick}>
+      <span className="button--name">{name}</span>
+    </Link>
   );
 };
