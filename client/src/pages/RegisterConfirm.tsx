@@ -48,7 +48,7 @@ const RegisterConfirmPage: FC = () => {
               name="code"
               placeholder="123456"
               label="Code"
-              onEmailChange={handleInput}
+              onCodeChange={handleInput}
             />
           </div>
         </div>

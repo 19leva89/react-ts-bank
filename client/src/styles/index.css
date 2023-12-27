@@ -133,7 +133,7 @@ body {
 
 .wrapper__movement {
 	position: absolute;
-	top: calc(50% - 150px);
+	top: calc(50% - 135px);
 	left: 50%;
 	transform: translateX(-50%);
 	display: flex;
@@ -162,10 +162,10 @@ body {
 	gap: 12px;
 }
 
-.transaction__img {
+.movement__img {
 }
 
-.transaction__details {
+.movement__details {
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
@@ -173,22 +173,22 @@ body {
 	gap: 8px;
 }
 
-.transaction__name {
+.movement__name {
 	color: #1d1d1f;
 	text-align: center;
 	font-size: 16px;
 	font-weight: 500;
 }
 
-.transaction__specialty {
+.movement__specialty {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
 	gap: 8px;
 }
 
-.transaction__time,
-.transaction__status {
+.movement__time,
+.movement__status {
 	color: #939199;
 	text-align: center;
 	font-size: 12px;
@@ -196,10 +196,17 @@ body {
 }
 
 .movement__cost {
-	color: #24b277;
 	text-align: center;
 	font-size: 16px;
 	font-weight: 500;
+}
+
+.movement__cost--plus {
+	color: #24b277;
+}
+
+.movement__cost--minus {
+	color: #1d1d1f;
 }
 
 .form {

@@ -56,7 +56,7 @@ const RecoveryConfirmPage: FC = () => {
               name="code"
               placeholder="Code"
               label="Code"
-              onEmailChange={handleInput}
+              onCodeChange={handleInput}
             />
           </div>
 

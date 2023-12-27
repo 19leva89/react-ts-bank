@@ -1,5 +1,5 @@
 import { FC, Fragment, useEffect, useRef, useState, ChangeEvent } from "react";
-import { validateEmail } from "../../utils/validators";
+import { validateCode, validateEmail, validateSum } from "../../utils/validators";
 import "./style.css";
 
 type FieldProps = {
@@ -7,10 +7,20 @@ type FieldProps = {
   name: string;
   label: string;
   placeholder: string;
-  onEmailChange: (name: string, value: string) => void;
+  onEmailChange?: (name: string, value: string) => void;
+  onSumChange?: (name: string, value: string) => void;
+  onCodeChange?: (name: string, value: string) => void;
 };
 
-export const Field: FC<FieldProps> = ({ type, name, placeholder, label, onEmailChange }) => {
+export const Field: FC<FieldProps> = ({
+  type,
+  name,
+  placeholder,
+  label,
+  onEmailChange,
+  onSumChange,
+  onCodeChange,
+}) => {
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -31,10 +41,37 @@ export const Field: FC<FieldProps> = ({ type, name, placeholder, label, onEmailC
         setError("Введіть коректне значення e-mail адреси");
       } else {
         setError("");
+        if (onEmailChange) {
+          onEmailChange(name, value);
+        }
       }
     }
 
-    onEmailChange(name, value);
+    if (name === "sum") {
+      const isValidSum = validateSum(value);
+
+      if (!isValidSum) {
+        setError("Введіть коректне число більше нуля");
+      } else {
+        setError("");
+        if (onSumChange) {
+          onSumChange(name, value);
+        }
+      }
+    }
+
+    if (name === "code") {
+      const isValidCode = validateCode(value);
+
+      if (!isValidCode) {
+        setError("введіть число з шести цифр");
+      } else {
+        setError("");
+        if (onCodeChange) {
+          onCodeChange(name, value);
+        }
+      }
+    }
   };
 
   return (

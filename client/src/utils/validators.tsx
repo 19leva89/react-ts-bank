@@ -7,5 +7,9 @@ export const validatePassword = (password: string): boolean => {
 };
 
 export const validateCode = (code: string): boolean => {
-  return /^\d{6,}$/.test(code);
+  return /^\d{6}$/.test(code);
+};
+
+export const validateSum = (sum: string): boolean => {
+  return /^(?!0+(\.0+)?$)\d+(\.\d{1,2})?$/.test(sum);
 };

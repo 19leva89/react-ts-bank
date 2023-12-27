@@ -38,18 +38,50 @@ const BalancePage: FC = () => {
       <section className="wrapper__movement">
         <div className="movement">
           <div className="movement__content">
-            <img className="transaction__img" src={stripe} alt="Stripe" />
+            <img className="movement__img" src={stripe} alt="Stripe" />
 
-            <div className="transaction__details">
-              <div className="transaction__name">Oleg V.</div>
-              <div className="transaction__specialty">
-                <div className="transaction__time">12:25</div>
-                <div className="transaction__status">Sending</div>
+            <div className="movement__details">
+              <div className="movement__name">Stripe</div>
+              <div className="movement__specialty">
+                <div className="movement__time">12:25</div>
+                <div className="movement__status">Receipt</div>
               </div>
             </div>
           </div>
 
-          <div className="movement__cost">+$125.00</div>
+          <div className="movement__cost movement__cost--plus">+$125.00</div>
+        </div>
+
+        <div className="movement">
+          <div className="movement__content">
+            <img className="movement__img" src={user} alt="Stripe" />
+
+            <div className="movement__details">
+              <div className="movement__name">Oleg V.</div>
+              <div className="movement__specialty">
+                <div className="movement__time">12:25</div>
+                <div className="movement__status">Sending</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="movement__cost movement__cost--minus">-$200.50</div>
+        </div>
+
+        <div className="movement">
+          <div className="movement__content">
+            <img className="movement__img" src={coinbase} alt="Stripe" />
+
+            <div className="movement__details">
+              <div className="movement__name">Coinbase</div>
+              <div className="movement__specialty">
+                <div className="movement__time">10:20</div>
+                <div className="movement__status">Receipt</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="movement__cost movement__cost--plus">+$1,200.00</div>
         </div>
       </section>
     </main>
