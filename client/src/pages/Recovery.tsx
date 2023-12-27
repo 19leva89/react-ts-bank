@@ -1,6 +1,7 @@
 import { useState, useEffect, FC, SetStateAction } from "react";
 import { validateEmail } from "../utils/validators";
 import { Field } from "../components/field";
+import { ButtonBack } from "../components/button-back";
 
 const RecoveryPage: FC = () => {
   const [isFormValid, setIsFormValid] = useState(false);
@@ -33,6 +34,8 @@ const RecoveryPage: FC = () => {
 
   return (
     <main className="main__container">
+      <ButtonBack />
+
       <form action="" method="" className="form__container" onSubmit={handleSubmit}>
         <h1 className="form__title">Recover password</h1>
 
@@ -51,14 +54,16 @@ const RecoveryPage: FC = () => {
         </div>
 
         <button
-          className={`button ${isFormValid ? "" : "button--disabled"}`}
+          className={`button button__primary ${isFormValid ? "" : "button--disabled"}`}
           type="submit"
           disabled={!isFormValid}
         >
-          Відновити пароль
+          Send code
         </button>
 
-        <span className="alert alert--disabled">Увага, помилка!</span>
+        <div className="form__item">
+          <span className="alert alert--disabled">Увага, помилка!</span>
+        </div>
       </form>
     </main>
   );

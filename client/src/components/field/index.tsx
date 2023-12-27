@@ -40,7 +40,10 @@ export const Field: FC<FieldProps> = ({ type, name, placeholder, label, onEmailC
   return (
     <Fragment>
       <div className="field">
-        <label htmlFor={name} className="field__label">
+        <label
+          htmlFor={name}
+          className={`field__label field__error ${error ? "field__error--active" : ""}`}
+        >
           {label}
         </label>
         <input

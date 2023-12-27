@@ -1,28 +1,37 @@
-import { useState, useEffect, FC, SetStateAction } from "react";
-import { validateEmail } from "../utils/validators";
+import { FC, useState, useEffect } from "react";
 import { Field } from "../components/field";
+import { ButtonBack } from "../components/button-back";
+import { FieldPasswordRegister } from "../components/field-password-register";
+import { validateCode } from "../utils/validators";
 
 const RecoveryConfirmPage: FC = () => {
   const [isFormValid, setIsFormValid] = useState(false);
-  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    const isEmailValid = email.trim() !== "";
+    const isCodeValid = code.trim() !== "";
+    const isPasswordValid = password.trim() !== "";
 
-    setIsFormValid(isEmailValid);
-  }, [email]);
+    setIsFormValid(isCodeValid && isPasswordValid);
+  }, [code, password]);
 
-  console.log("email:", email);
+  console.log("code:", code);
+  console.log("password:", password);
 
-  const handleInput = (name: string, value: SetStateAction<string>) => {
-    if (name === "email") {
-      const isValidEmail = validateEmail(value as string);
+  const handleInput = (name: string, value: string | number) => {
+    if (name === "code") {
+      const isValidCode = validateCode(value as string);
 
-      if (isValidEmail) {
-        setEmail(value as string);
+      if (isValidCode) {
+        setCode(value as string);
       } else {
-        setEmail("");
+        setCode("");
       }
+    }
+
+    if (name === "password") {
+      setPassword(value as string);
     }
   };
 
@@ -33,6 +42,8 @@ const RecoveryConfirmPage: FC = () => {
 
   return (
     <main className="main__container">
+      <ButtonBack />
+
       <form action="" method="" className="form__container" onSubmit={handleSubmit}>
         <h1 className="form__title">Recover password</h1>
 
@@ -41,24 +52,30 @@ const RecoveryConfirmPage: FC = () => {
         <div className="form">
           <div className="form__item">
             <Field
-              type="email"
-              name="email"
-              placeholder="Електронна пошта"
+              type="code"
+              name="code"
+              placeholder="Code"
               label="Code"
               onEmailChange={handleInput}
             />
           </div>
+
+          <div className="form__item">
+            <FieldPasswordRegister label="Password" onPassChangeReg={handleInput} />
+          </div>
         </div>
 
         <button
-          className={`button ${isFormValid ? "" : "button--disabled"}`}
+          className={`button button__primary ${isFormValid ? "" : "button--disabled"}`}
           type="submit"
           disabled={!isFormValid}
         >
-          Відновити пароль
+          Restore password
         </button>
 
-        <span className="alert alert--disabled">Увага, помилка!</span>
+        <div className="form__item">
+          <span className="alert alert--disabled">Увага, помилка!</span>
+        </div>
       </form>
     </main>
   );

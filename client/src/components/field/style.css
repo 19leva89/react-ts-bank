@@ -34,3 +34,10 @@
 .field__input:focus {
 	border-color: #775ce5;
 }
+
+.field__error {
+}
+
+.field__error--active {
+	color: #f23152 !important;
+}

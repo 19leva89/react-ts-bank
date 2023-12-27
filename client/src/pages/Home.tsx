@@ -19,12 +19,12 @@ const WelcomePage: FC = () => {
 
   return (
     <main>
-      <img className="background-img" src={background} alt="Background" />
+      <img className="background--img" src={background} alt="Background" />
 
       <section className="wrapper">
         <h1 className="wrapper__title">Hello!</h1>
         <p className="wrapper__text">Welcome to bank app</p>
-        <img className="background-safe" src={backgroundSafe} alt="Background safe" />
+        <img className="background-safe--img" src={backgroundSafe} alt="Background safe" />
       </section>
 
       <div className="wrapper__button">

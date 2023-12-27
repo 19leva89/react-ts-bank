@@ -5,3 +5,7 @@ export const validateEmail = (email: string): boolean => {
 export const validatePassword = (password: string): boolean => {
   return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
 };
+
+export const validateCode = (code: string): boolean => {
+  return /^\d{6,}$/.test(code);
+};

@@ -1,6 +1,7 @@
 import { FC, useState, useEffect } from "react";
-import { validatePassword } from "../utils/validators";
+import { validateCode } from "../utils/validators";
 import { Field } from "../components/field";
+import { ButtonBack } from "../components/button-back";
 
 const RegisterConfirmPage: FC = () => {
   const [isFormValid, setIsFormValid] = useState(false);
@@ -16,9 +17,9 @@ const RegisterConfirmPage: FC = () => {
 
   const handleInput = (name: string, value: string | boolean) => {
     if (name === "code") {
-      const isValidPassword = validatePassword(value as string);
+      const isValidCode = validateCode(value as string);
 
-      if (isValidPassword) {
+      if (isValidCode) {
         setCode(value as string);
       } else {
         setCode("");
@@ -33,6 +34,8 @@ const RegisterConfirmPage: FC = () => {
 
   return (
     <main className="main__container">
+      <ButtonBack />
+
       <form action="/check" method="post" className="form__container" onSubmit={handleSubmit}>
         <h1 className="form__title">Confirm account</h1>
 
@@ -51,14 +54,16 @@ const RegisterConfirmPage: FC = () => {
         </div>
 
         <button
-          className={`button ${isFormValid ? "" : "button--disabled"}`}
+          className={`button button__primary ${isFormValid ? "" : "button--disabled"}`}
           type="submit"
           disabled={!isFormValid}
         >
           Confirm
         </button>
 
-        <span className="alert alert--disabled">Увага, помилка!</span>
+        <div className="form__item">
+          <span className="alert alert--disabled">Увага, помилка!</span>
+        </div>
       </form>
     </main>
   );
