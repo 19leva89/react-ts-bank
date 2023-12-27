@@ -1,16 +1,20 @@
 import { FC } from "react";
+import { useNavigate } from "react-router-dom";
 
+import backButton from "./back-button.svg";
 import "./style.css";
 
 export const ButtonBack: FC = () => {
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    console.log("Button clicked");
-    // Ви можете виконати інші дії, що пов'язані з натисканням кнопки тут
+    // console.log("Button clicked");
+    navigate(-1); // Повернення на попередню сторінку
   };
 
   return (
-    <div className="back-button" onClick={handleClick}>
-      <img src="/svg/back-button.svg" alt="<" width="24" height="24" />
+    <div className="button button__back" onClick={handleClick}>
+      <img src={backButton} alt="<" width="24" height="24" />
     </div>
   );
 };

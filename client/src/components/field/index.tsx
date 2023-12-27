@@ -5,11 +5,12 @@ import "./style.css";
 type FieldProps = {
   type: string;
   name: string;
+  label: string;
   placeholder: string;
   onEmailChange: (name: string, value: string) => void;
 };
 
-export const Field: FC<FieldProps> = ({ type, name, placeholder, onEmailChange }) => {
+export const Field: FC<FieldProps> = ({ type, name, placeholder, label, onEmailChange }) => {
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -39,6 +40,9 @@ export const Field: FC<FieldProps> = ({ type, name, placeholder, onEmailChange }
   return (
     <Fragment>
       <div className="field">
+        <label htmlFor={name} className="field__label">
+          {label}
+        </label>
         <input
           className={`field__input validation ${error ? "validation--active" : ""}`}
           name={name}

@@ -35,17 +35,17 @@ a,
 	cursor: default;
 }
 
-.button__register {
+.button__primary {
 	color: #fff;
 	width: calc(100% - 40px);
 	background-color: #775ce5;
-	margin-top: 90px;
+	margin: 20px;
 	height: 56px;
 	font-size: 16px;
 	font-weight: 500;
 }
 
-.button__login {
+.button__transparent {
 	color: #775ce5;
 	width: calc(100% - 40px);
 	background-color: #fff;
@@ -55,7 +55,7 @@ a,
 	font-weight: 500;
 }
 
-.button__login:hover {
+.button__transparent:hover {
 	background-color: #775ce5;
 	color: #fff;
 	opacity: 0.7;

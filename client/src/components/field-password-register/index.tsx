@@ -3,11 +3,13 @@ import { validatePassword } from "../../utils/validators";
 import "./style.css";
 
 type FieldPasswordRegisterProps = {
+  label: string;
   onPassChangeReg: (name: string, value: string) => void;
   onPassChangeAgainReg: (name: string, value: string) => void;
 };
 
 export const FieldPasswordRegister: FC<FieldPasswordRegisterProps> = ({
+  label,
   onPassChangeReg,
   onPassChangeAgainReg,
 }) => {
@@ -63,6 +65,10 @@ export const FieldPasswordRegister: FC<FieldPasswordRegisterProps> = ({
     <Fragment>
       <Fragment>
         <div className="field field--password">
+          <label htmlFor="password" className="field__label">
+            {label}
+          </label>
+
           <div className="field__wrapper">
             <input
               className={`field__input validation ${error ? "validation--active" : ""}`}

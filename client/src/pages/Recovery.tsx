@@ -34,7 +34,9 @@ const RecoveryPage: FC = () => {
   return (
     <main className="main__container">
       <form action="" method="" className="form__container" onSubmit={handleSubmit}>
-        <h1 className="form__title">Відновлення паролю</h1>
+        <h1 className="form__title">Recover password</h1>
+
+        <p className="form__text">Choose a recovery method</p>
 
         <div className="form">
           <div className="form__item">
@@ -42,6 +44,7 @@ const RecoveryPage: FC = () => {
               type="email"
               name="email"
               placeholder="Електронна пошта"
+              label="Email"
               onEmailChange={handleInput}
             />
           </div>

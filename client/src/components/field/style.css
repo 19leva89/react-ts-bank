@@ -3,16 +3,23 @@
 	flex-direction: column;
 	flex-wrap: nowrap;
 	gap: 8px;
-	align-items: stretch;
+	width: calc(100% - 40px);
+}
+
+.field__label {
+	color: #1d1d1f;
+	font-size: 14px;
+	font-weight: 400;
 }
 
 .field__input {
-	border: 1px solid #ced4da;
-	border-radius: 3px;
-	padding: 10px;
-	font-size: 1em;
-	width: 100%;
+	border: 1px solid #e9e8eb;
+	border-radius: 12px;
+	padding: 16px 16px;
+	align-self: stretch;
 	color: #121212;
+	font-size: 14px;
+	font-weight: 400;
 	transition: border-color 0.3s;
 }
 
@@ -21,9 +28,9 @@
 }
 
 .field__input:hover {
-	border-color: #ffd100;
+	border-color: #775ce5;
 }
 
 .field__input:focus {
-	border-color: #0055a4;
+	border-color: #775ce5;
 }

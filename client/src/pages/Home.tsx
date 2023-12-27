@@ -27,18 +27,20 @@ const WelcomePage: FC = () => {
         <img className="background-safe" src={backgroundSafe} alt="Background safe" />
       </section>
 
-      <Button
-        name="Register"
-        className="button button__register"
-        href="/register"
-        onClick={handleRegisterClick}
-      />
-      <Button
-        name="Login"
-        className="button button__login"
-        href="/login"
-        onClick={handleLoginClick}
-      />
+      <div className="wrapper__button">
+        <Button
+          name="Register"
+          className="button button__primary"
+          href="/register"
+          onClick={handleRegisterClick}
+        />
+        <Button
+          name="Login"
+          className="button button__transparent"
+          href="/login"
+          onClick={handleLoginClick}
+        />
+      </div>
     </main>
   );
 };

@@ -4,12 +4,14 @@ import "./style.css";
 type FieldPasswordLoginProps = {
   name: string;
   placeholder: string;
+  label: string;
   onPasswordChangeLog: (name: string, value: string) => void;
 };
 
 export const FieldPasswordLogin: FC<FieldPasswordLoginProps> = ({
   name,
   placeholder,
+  label,
   onPasswordChangeLog,
 }) => {
   const [password, setPassword] = useState("");
@@ -33,6 +35,10 @@ export const FieldPasswordLogin: FC<FieldPasswordLoginProps> = ({
   return (
     <Fragment>
       <div className="field field--password">
+        <label htmlFor="password" className="field__label">
+          {label}
+        </label>
+
         <div className="field__wrapper">
           <input
             className="field__input validation"

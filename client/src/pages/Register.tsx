@@ -8,24 +8,16 @@ const RegisterPage: FC = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordAgain, setPasswordAgain] = useState("");
-  const [role, setRole] = useState("");
-  const [checkbox, setCheckbox] = useState(false);
 
   useEffect(() => {
     const isEmailValid = email.trim() !== "";
-    const isPasswordValid = password.trim() !== "" && password === passwordAgain;
-    const isRoleValid = role.trim() !== "";
-    const isCheckboxChecked = checkbox === true;
+    const isPasswordValid = password.trim() !== "";
 
-    setIsFormValid(isEmailValid && isPasswordValid && isRoleValid && isCheckboxChecked);
-  }, [email, password, passwordAgain, role, checkbox]);
+    setIsFormValid(isEmailValid && isPasswordValid);
+  }, [email, password]);
 
   console.log("email:", email);
   console.log("password:", password);
-  console.log("passwordAgain:", passwordAgain);
-  console.log("role:", role);
-  console.log("checkbox:", checkbox);
 
   const handleInput = (name: string, value: string | boolean) => {
     if (name === "email") {
@@ -47,24 +39,6 @@ const RegisterPage: FC = () => {
         setPassword("");
       }
     }
-
-    if (name === "passwordAgain") {
-      const isValidPassword = validatePassword(value as string);
-
-      if (isValidPassword) {
-        setPasswordAgain(value as string);
-      } else {
-        setPasswordAgain("");
-      }
-    }
-
-    if (name === "role") {
-      setRole(value as string);
-    }
-
-    if (name === "checkbox") {
-      setCheckbox(value as boolean);
-    }
   };
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
@@ -75,7 +49,9 @@ const RegisterPage: FC = () => {
   return (
     <main className="main__container">
       <form action="/auth/check" method="post" className="form__container" onSubmit={handleSubmit}>
-        <h1 className="form__title">Реєстрація користувача</h1>
+        <h1 className="form__title">Register</h1>
+
+        <p className="form__text">Choose a registration method</p>
 
         <div className="form">
           <div className="form__item">
@@ -83,12 +59,14 @@ const RegisterPage: FC = () => {
               type="email"
               name="email"
               placeholder="Електронна пошта"
+              label="Email"
               onEmailChange={handleInput}
             />
           </div>
 
           <div className="form__item">
             <FieldPasswordRegister
+              label="Password"
               onPassChangeReg={handleInput}
               onPassChangeAgainReg={handleInput}
             />
@@ -105,7 +83,7 @@ const RegisterPage: FC = () => {
 
         <span className="link__prefix">
           Маєте акаунт?
-          <NavLink to="/auth/login" className="link">
+          <NavLink to="/login" className="link">
             Увійти
           </NavLink>
         </span>

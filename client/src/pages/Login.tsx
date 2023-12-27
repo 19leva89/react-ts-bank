@@ -3,23 +3,22 @@ import { NavLink } from "react-router-dom";
 import { validateEmail } from "../utils/validators";
 import { Field } from "../components/field";
 import { FieldPasswordLogin } from "../components/field-password-login";
+import { ButtonBack } from "../components/button-back";
 
 const LoginPage: FC = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [checkbox, setCheckbox] = useState(false);
 
   useEffect(() => {
     const isEmailValid = email.trim() !== "";
     const isPasswordValid = password.trim() !== "";
 
     setIsFormValid(isEmailValid && isPasswordValid);
-  }, [email, password, checkbox]);
+  }, [email, password]);
 
   console.log("email:", email);
   console.log("password:", password);
-  console.log("checkbox:", checkbox);
 
   const handleInput = (name: string, value: string | boolean) => {
     if (name === "email") {
@@ -35,10 +34,6 @@ const LoginPage: FC = () => {
     if (name === "password") {
       setPassword(value as string);
     }
-
-    if (name === "checkbox") {
-      setCheckbox(value as boolean);
-    }
   };
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
@@ -48,8 +43,12 @@ const LoginPage: FC = () => {
 
   return (
     <main className="main__container">
+      <ButtonBack />
+
       <form action="" method="" className="form__container" onSubmit={handleSubmit}>
-        <h1 className="form__title">Вхід</h1>
+        <h1 className="form__title">Login</h1>
+
+        <p className="form__text">Select login method</p>
 
         <div className="form">
           <div className="form__item">
@@ -57,12 +56,14 @@ const LoginPage: FC = () => {
               type="email"
               name="email"
               placeholder="Електронна пошта"
+              label="Email"
               onEmailChange={handleInput}
             />
           </div>
 
           <div className="form__item">
             <FieldPasswordLogin
+              label="Password"
               name="password"
               placeholder="Пароль"
               onPasswordChangeLog={handleInput}
@@ -70,22 +71,26 @@ const LoginPage: FC = () => {
           </div>
         </div>
 
+        <div className="form__item">
+          <span className="link__prefix">
+            Forgot your password?
+            <NavLink to="/recovery" className="link">
+              <> </>Restore
+            </NavLink>
+          </span>
+        </div>
+
         <button
-          className={`button ${isFormValid ? "" : "button--disabled"}`}
+          className={`button button__primary ${isFormValid ? "" : "button--disabled"}`}
           type="submit"
           disabled={!isFormValid}
         >
-          Увійти
+          Continue
         </button>
 
-        <span className="link__prefix">
-          Забули пароль?
-          <NavLink to="/auth/recovery" className="link">
-            Відновити
-          </NavLink>
-        </span>
-
-        <span className="alert alert--disabled">Увага, помилка!</span>
+        <div className="form__item">
+          <span className="alert alert--disabled">Увага, помилка!</span>
+        </div>
       </form>
     </main>
   );
