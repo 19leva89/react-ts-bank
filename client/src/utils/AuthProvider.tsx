@@ -22,6 +22,7 @@ const initialState: AuthState = {
   token: null,
   user: null,
 };
+// console.log(initialState);
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
@@ -41,8 +42,10 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
       return state;
   }
 };
+// console.log(authReducer);
 
 export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+// console.log(AuthContext);
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [authState, dispatch]: [AuthState, Dispatch<AuthAction>] = useReducer(
@@ -69,3 +72,4 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   return <AuthContext.Provider value={authContextData}>{children}</AuthContext.Provider>;
 };
+// console.log(AuthProvider);

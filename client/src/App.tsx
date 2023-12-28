@@ -29,22 +29,15 @@ const AuthRoute: FC<{ children: ReactNode }> = ({ children }) => {
 const PrivateRoute: FC<{ children: ReactNode }> = ({ children }) => {
   const authContext = useContext(AuthContext);
 
-  // if (!authContext || !authContext.isLogged) {
-  //   return <LoginPage />;
-  // }
-
-  // return <>{children}</>;
-
-  //test
   if (!authContext || !authContext.isLogged) {
-    return <>{children}</>;
+    return <LoginPage />;
   }
 
-  return <LoginPage />;
+  return <>{children}</>;
 };
 
 function App() {
-  const [isLogged, login] = useState(true);
+  // const [isLogged, login] = useState(true);
 
   return (
     <AuthProvider>

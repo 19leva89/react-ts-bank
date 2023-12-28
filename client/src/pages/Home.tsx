@@ -1,20 +1,54 @@
-import { FC, useState } from "react";
+import { FC, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { Session } from "../class/session";
+import { AuthContext } from "./../utils/AuthProvider";
 import { Button } from "../components/button";
 import background from "./../img/background.png";
 import backgroundSafe from "./../img/background-safe.png";
 
 const WelcomePage: FC = () => {
-  const [clickInfo, setClickInfo] = useState("");
-  console.log(clickInfo);
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
 
   const handleRegisterClick = () => {
-    // Логіка для обробки кліку на кнопку Register
-    setClickInfo("Register button clicked");
+    console.log("Register button clicked");
+
+    if (authContext) {
+      const userData = {
+        email: "",
+        isConfirm: false,
+        id: "",
+      };
+      const newSession = Session.create(userData);
+      const token = newSession.token;
+
+      authContext.login(token, userData);
+
+      navigate("/register");
+    } else {
+      navigate("/");
+    }
   };
 
   const handleLoginClick = () => {
     // Логіка для обробки кліку на кнопку Login
-    setClickInfo("Login button clicked");
+    console.log("Login button clicked");
+
+    if (authContext) {
+      const userData = {
+        email: "",
+        isConfirm: false,
+        id: "",
+      };
+      const newSession = Session.create(userData);
+      const token = newSession.token;
+
+      authContext.login(token, userData);
+
+      navigate("/login");
+    } else {
+      navigate("/");
+    }
   };
 
   return (
