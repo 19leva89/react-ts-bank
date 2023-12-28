@@ -19,11 +19,14 @@ import NotFound from "./pages/NotFound";
 const AuthRoute: FC<{ children: ReactNode }> = ({ children }) => {
   const authContext = useContext(AuthContext);
 
-  if (!authContext || !authContext.authState || !authContext.authState.token) {
-    return <WelcomePage />;
+  // Перевіряємо, чи є токен у контексті аутентифікації
+  if (authContext && authContext.authState && authContext.authState.token) {
+    // Якщо токен є, перенаправляємо на сторінку балансу
+    return <BalancePage />;
   }
 
-  return authContext.authState.token ? <>{children}</> : <BalancePage />;
+  // Якщо токен відсутній, відображаємо передані дочірні компоненти
+  return <>{children}</>;
 };
 
 const PrivateRoute: FC<{ children: ReactNode }> = ({ children }) => {
@@ -37,7 +40,7 @@ const PrivateRoute: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 function App() {
-  // const [isLogged, login] = useState(true);
+  const [isLogged, login] = useState(true);
 
   return (
     <AuthProvider>

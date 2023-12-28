@@ -1,19 +1,16 @@
+import { User } from "./user";
+
 class Session {
   private static list: Session[] = [];
 
   public token: string;
-  public user: {
-    email: string;
-    isConfirm: boolean;
-    id: string;
-  };
+  public user: { email: string; isConfirm: boolean };
 
-  private constructor(user: { email: string; isConfirm: boolean; id: string }) {
+  private constructor(user: { email: string; isConfirm: boolean }) {
     this.token = Session.generateToken();
     this.user = {
       email: user.email,
       isConfirm: user.isConfirm,
-      id: user.id,
     };
   }
 
@@ -31,7 +28,7 @@ class Session {
     return result;
   };
 
-  public static create = (user: { email: string; isConfirm: boolean; id: string }): Session => {
+  public static create = (user: { email: string; isConfirm: boolean }): Session => {
     const session = new Session(user);
 
     Session.list.push(session);

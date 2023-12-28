@@ -23,7 +23,7 @@ export const FieldPasswordLogin: FC<FieldPasswordLoginProps> = ({
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(`Поле ${name} було змінено на ${value}`);
+    // console.log(`Поле ${name} було змінено на ${value}`);
 
     if (name === "password") {
       setPassword(value);

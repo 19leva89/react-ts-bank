@@ -17,8 +17,8 @@ const LoginPage: FC = () => {
     setIsFormValid(isEmailValid && isPasswordValid);
   }, [email, password]);
 
-  console.log("email:", email);
-  console.log("password:", password);
+  // console.log("email:", email);
+  // console.log("password:", password);
 
   const handleInput = (name: string, value: string | boolean) => {
     if (name === "email") {

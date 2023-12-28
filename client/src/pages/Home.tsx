@@ -1,54 +1,17 @@
-import { FC, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { Session } from "../class/session";
-import { AuthContext } from "./../utils/AuthProvider";
+import { FC } from "react";
 import { Button } from "../components/button";
 import background from "./../img/background.png";
 import backgroundSafe from "./../img/background-safe.png";
 
 const WelcomePage: FC = () => {
-  const navigate = useNavigate();
-  const authContext = useContext(AuthContext);
-
   const handleRegisterClick = () => {
-    console.log("Register button clicked");
-
-    if (authContext) {
-      const userData = {
-        email: "",
-        isConfirm: false,
-        id: "",
-      };
-      const newSession = Session.create(userData);
-      const token = newSession.token;
-
-      authContext.login(token, userData);
-
-      navigate("/register");
-    } else {
-      navigate("/");
-    }
+    // Логіка для обробки кліку на кнопку Register
+    // console.log("Register button clicked");
   };
 
   const handleLoginClick = () => {
     // Логіка для обробки кліку на кнопку Login
-    console.log("Login button clicked");
-
-    if (authContext) {
-      const userData = {
-        email: "",
-        isConfirm: false,
-        id: "",
-      };
-      const newSession = Session.create(userData);
-      const token = newSession.token;
-
-      authContext.login(token, userData);
-
-      navigate("/login");
-    } else {
-      navigate("/");
-    }
+    // console.log("Login button clicked");
   };
 
   return (

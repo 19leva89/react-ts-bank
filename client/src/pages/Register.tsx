@@ -1,11 +1,16 @@
-import { FC, useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { FC, useState, useEffect, useContext } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { Session } from "../class/session";
 import { validateEmail, validatePassword } from "../utils/validators";
+import { AuthContext } from "../utils/AuthProvider";
+
 import { Field } from "../components/field";
 import { FieldPasswordRegister } from "../components/field-password-register";
 import { ButtonBack } from "../components/button-back";
 
 const RegisterPage: FC = () => {
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
   const [isFormValid, setIsFormValid] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,8 +22,8 @@ const RegisterPage: FC = () => {
     setIsFormValid(isEmailValid && isPasswordValid);
   }, [email, password]);
 
-  console.log("email:", email);
-  console.log("password:", password);
+  // console.log("email:", email);
+  // console.log("password:", password);
 
   const handleInput = (name: string, value: string | boolean) => {
     if (name === "email") {
@@ -42,9 +47,38 @@ const RegisterPage: FC = () => {
     }
   };
 
-  const handleSubmit = (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    // Виконайте логіку для відправки форми, якщо isFormValid === true
+
+    if (isFormValid && authContext) {
+      const userData = {
+        email: email,
+        isConfirm: false,
+      };
+      const newSession = Session.create(userData);
+      const token = newSession.token;
+
+      try {
+        const response = await fetch("http://localhost:4000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
+
+        if (response.ok) {
+          authContext.login(token, userData);
+          navigate("/register-confirm");
+        } else {
+          // Обробити помилку від сервера
+        }
+      } catch (error) {
+        // Обробити помилку від fetch
+      }
+    } else {
+      navigate("/");
+    }
   };
 
   return (

@@ -16,8 +16,8 @@ const RecoveryConfirmPage: FC = () => {
     setIsFormValid(isCodeValid && isPasswordValid);
   }, [code, password]);
 
-  console.log("code:", code);
-  console.log("password:", password);
+  // console.log("code:", code);
+  // console.log("password:", password);
 
   const handleInput = (name: string, value: string | number) => {
     if (name === "code") {
