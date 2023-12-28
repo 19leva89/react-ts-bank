@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Session } from "../class/session";
+import { Session } from "../../../server/src/class/session";
 import { validateEmail, validatePassword } from "../utils/validators";
 import { AuthContext } from "../utils/AuthProvider";
 

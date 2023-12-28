@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "../server/src/class/user.tsx", "../server/src/class/session.tsx", "../server/src/class/confirm.tsx"  ]
 }
