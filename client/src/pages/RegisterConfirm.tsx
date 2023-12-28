@@ -1,9 +1,14 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useContext } from "react";
 import { validateCode } from "../utils/validators";
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../utils/AuthProvider";
+import { getTokenSession, saveSession } from "../script/session";
 
 const RegisterConfirmPage: FC = () => {
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
   const [isFormValid, setIsFormValid] = useState(false);
   const [code, setCode] = useState("");
 
@@ -27,9 +32,48 @@ const RegisterConfirmPage: FC = () => {
     }
   };
 
-  const handleSubmit = (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    // Виконайте логіку для відправки форми, якщо isFormValid === true
+
+    if (isFormValid && authContext) {
+      const token = getTokenSession();
+      const userData = {
+        code: Number(code),
+        token: token,
+      };
+
+      try {
+        const res = await fetch("http://localhost:4000/register-confirm", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
+        const data = await res.json();
+        console.log("Data from server:", data);
+
+        if (res.ok) {
+          saveSession(data.session);
+
+          const { token, user } = data.session;
+          authContext.update(token, user);
+
+          navigate("/balance");
+        } else {
+          if (data && data.message) {
+            // Обробка повідомлення про помилку з сервера
+            console.error("Server error:", data.message);
+          } else {
+            // Обробка загальної помилки від сервера
+            console.error("Server error:", res.statusText);
+          }
+        }
+      } catch (err) {
+        // Обробити помилку від fetch
+        console.error("Fetch error:", err);
+      }
+    }
   };
 
   return (
@@ -46,7 +90,7 @@ const RegisterConfirmPage: FC = () => {
             <Field
               type="code"
               name="code"
-              placeholder="123456"
+              placeholder="1234"
               label="Code"
               onCodeChange={handleInput}
             />

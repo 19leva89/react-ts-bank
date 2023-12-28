@@ -1,8 +1,8 @@
 import { FC, useState, useEffect, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Session } from "../../../server/src/class/session";
 import { validateEmail, validatePassword } from "../utils/validators";
 import { AuthContext } from "../utils/AuthProvider";
+import { saveSession } from "../script/session";
 
 import { Field } from "../components/field";
 import { FieldPasswordRegister } from "../components/field-password-register";
@@ -53,13 +53,11 @@ const RegisterPage: FC = () => {
     if (isFormValid && authContext) {
       const userData = {
         email: email,
-        isConfirm: false,
+        password: password,
       };
-      const newSession = Session.create(userData);
-      const token = newSession.token;
 
       try {
-        const response = await fetch("http://localhost:4000/register", {
+        const res = await fetch("http://localhost:4000/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -67,25 +65,33 @@ const RegisterPage: FC = () => {
           body: JSON.stringify(userData),
         });
 
-        if (response.ok) {
-          authContext.login(token, userData);
+        const data = await res.json();
+        // console.log("Data from server:", data);
+
+        if (res.ok) {
+          saveSession(data.session);
           navigate("/register-confirm");
         } else {
-          // Обробити помилку від сервера
+          if (data && data.message) {
+            // Обробка повідомлення про помилку з сервера
+            console.error("Server error:", data.message);
+          } else {
+            // Обробка загальної помилки від сервера
+            console.error("Server error:", res.statusText);
+          }
         }
-      } catch (error) {
+      } catch (err) {
         // Обробити помилку від fetch
+        console.error("Fetch error:", err);
       }
-    } else {
-      navigate("/");
-    }
+    } 
   };
 
   return (
     <main className="main__container">
       <ButtonBack />
 
-      <form action="/auth/check" method="post" className="form__container" onSubmit={handleSubmit}>
+      <form action="" method="" className="form__container" onSubmit={handleSubmit}>
         <h1 className="form__title">Register</h1>
 
         <p className="form__text">Choose a registration method</p>

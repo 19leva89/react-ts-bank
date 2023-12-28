@@ -14,7 +14,7 @@ class User {
 		console.log(user);
 
 		this.list.push(user);
-		console.log(this.list);
+		// console.log(this.list);
 
 		return user;
 	}

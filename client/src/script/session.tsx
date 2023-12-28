@@ -1,14 +1,18 @@
 export const SESSION_KEY = "sessionAuth";
 
 export interface Session {
-  // Додайте поля вашого об'єкту сесії тут
   token: string;
-  // інші поля...
+  user: {
+    email: string;
+    isConfirm: boolean;
+    id: number;
+  };
 }
 
 export const saveSession = (session: Session): void => {
   try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    const sessionString = JSON.stringify(session);
+    localStorage.setItem(SESSION_KEY, sessionString);
   } catch (err) {
     console.log(err);
   }
@@ -16,8 +20,11 @@ export const saveSession = (session: Session): void => {
 
 export const loadSession = (): Session | null => {
   try {
-    const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "") as Session;
-    return session || null;
+    const sessionData = localStorage.getItem(SESSION_KEY);
+    if (!sessionData) return null;
+
+    const session = JSON.parse(sessionData) as Session;
+    return session;
   } catch (err) {
     console.error(err);
     return null;

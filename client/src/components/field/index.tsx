@@ -64,7 +64,7 @@ export const Field: FC<FieldProps> = ({
       const isValidCode = validateCode(value);
 
       if (!isValidCode) {
-        setError("введіть число з шести цифр");
+        setError("Введіть число з чотирьох цифр");
       } else {
         setError("");
         if (onCodeChange) {

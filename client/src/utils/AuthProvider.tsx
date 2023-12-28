@@ -2,25 +2,32 @@ import { createContext, useReducer, ReactNode, Dispatch, FC } from "react";
 
 interface AuthState {
   token: string | null;
-  user: any;
+  user: string | null;
 }
 
 interface AuthContextProps {
   authState: AuthState;
   isLogged: boolean;
-  login: (token: string, user: any) => void;
+  login: (token: string, user: string) => void;
   logout: () => void;
+  update: (updatedToken: string, updatedUser: string) => void;
 }
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-type AuthAction = { type: "LOGIN"; payload: { token: string; user: any } } | { type: "LOGOUT" };
+type AuthAction = { type: "LOGIN"; payload: { token: string; user: string } } | { type: "LOGOUT" };
+
+const storedToken = localStorage.getItem("token");
+const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+console.log(storedUser);
+console.log(typeof storedUser === "object" && storedUser !== null);
 
 const initialState: AuthState = {
-  token: null,
-  user: null,
+  token: storedToken || null,
+  user: Object.keys(storedUser).length ? storedUser : null,
 };
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
@@ -52,7 +59,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   const isLogged = !!authState.token;
 
-  const login = (token: string, user: any) => {
+  const update = (updatedToken: string, updatedUser: string) => {
+    dispatch({ type: "LOGIN", payload: { token: updatedToken, user: updatedUser } });
+  };
+
+  const login = (token: string, user: string) => {
     dispatch({ type: "LOGIN", payload: { token, user } });
   };
 
@@ -67,6 +78,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     isLogged,
     login,
     logout,
+    update,
   };
 
   return <AuthContext.Provider value={authContextData}>{children}</AuthContext.Provider>;

@@ -9,18 +9,8 @@ const { Session } = require('./../class/session')
 
 
 User.create({
-	email: 'user@mail.com',
-	password: 123,
-})
-
-User.create({
-	email: 'admin@mail.com',
-	password: 123,
-})
-
-User.create({
-	email: 'developer@mail.com',
-	password: 123,
+	email: '19leva89@gmail.com',
+	password: '22vFq1989',
 })
 
 // ================================================================
@@ -163,13 +153,13 @@ router.post('/recovery-confirm', function (req, res) {
 
 })
 
-router.get('/register-confirm', function (req, res) {
-	const { renew, email } = req.query
+// router.get('/register-confirm', function (req, res) {
+// 	const { renew, email } = req.query
 
-	if (renew) {
-		Confirm.create(email)
-	}
-})
+// 	if (renew) {
+// 		Confirm.create(email)
+// 	}
+// })
 
 router.post('/register-confirm', function (req, res) {
 	const { code, token } = req.body
@@ -192,6 +182,7 @@ router.post('/register-confirm', function (req, res) {
 		}
 
 		const email = Confirm.getData(code)
+		console.log("email from server:", email);
 
 		if (!email) {
 			return res.status(400).json({
@@ -219,12 +210,14 @@ router.post('/register-confirm', function (req, res) {
 			message: err.message
 		})
 	}
-
-
 })
 
 router.get('/login', function (req, res) {
+	try {
 
+	} catch (err) {
+
+	}
 })
 
 router.post('/login', function (req, res) {

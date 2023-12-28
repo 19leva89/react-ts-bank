@@ -40,8 +40,6 @@ const PrivateRoute: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 function App() {
-  const [isLogged, login] = useState(true);
-
   return (
     <AuthProvider>
       <BrowserRouter>

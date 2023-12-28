@@ -7,7 +7,7 @@ export const validatePassword = (password: string): boolean => {
 };
 
 export const validateCode = (code: string): boolean => {
-  return /^\d{6}$/.test(code);
+  return /^\d{4}$/.test(code);
 };
 
 export const validateSum = (sum: string): boolean => {
