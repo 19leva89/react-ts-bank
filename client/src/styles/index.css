@@ -209,8 +209,25 @@ body {
 	color: #1d1d1f;
 }
 
+.menu__container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: flex-end;
+	justify-content: space-between;
+}
+
+.stub {
+	width: 64px;
+	height: 64px;
+}
+
 .form {
 	margin-top: 32px;
+}
+
+.form--slim {
+	margin-top: 0;
 }
 
 .form__item {
@@ -219,6 +236,10 @@ body {
 	flex-wrap: nowrap;
 	align-items: center;
 	margin: 20px 0;
+}
+
+.form__item--slim {
+	margin: 10px 0;
 }
 
 .form__title {
@@ -236,6 +257,14 @@ body {
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 400;
+}
+
+.form__text--big {
+	margin-top: 12px;
+	color: #000;
+	text-align: center;
+	font-size: 16px;
+	font-weight: 500;
 }
 
 .form__error {

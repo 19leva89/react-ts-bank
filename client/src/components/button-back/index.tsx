@@ -13,8 +13,8 @@ export const ButtonBack: FC = () => {
   };
 
   return (
-    <div className="button button__back" onClick={handleClick}>
-      <img src={buttonBack} alt="<" width="24" height="24" />
+    <div className="button button__back">
+      <img src={buttonBack} alt="<" width="24" height="24" onClick={handleClick} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ type FieldProps = {
   label: string;
   placeholder: string;
   onEmailChange?: (name: string, value: string) => void;
+  onNewEmailChange?: (name: string, value: string) => void;
   onSumChange?: (name: string, value: string) => void;
   onCodeChange?: (name: string, value: string) => void;
 };
@@ -18,6 +19,7 @@ export const Field: FC<FieldProps> = ({
   placeholder,
   label,
   onEmailChange,
+  onNewEmailChange,
   onSumChange,
   onCodeChange,
 }) => {
@@ -43,6 +45,19 @@ export const Field: FC<FieldProps> = ({
         setError("");
         if (onEmailChange) {
           onEmailChange(name, value);
+        }
+      }
+    }
+
+    if (name === "newEmail") {
+      const isValidEmail = validateEmail(value); // Перевірка на валідний email
+
+      if (!isValidEmail) {
+        setError("Введіть коректне значення e-mail адреси");
+      } else {
+        setError("");
+        if (onNewEmailChange) {
+          onNewEmailChange(name, value);
         }
       }
     }

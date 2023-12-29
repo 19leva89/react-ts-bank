@@ -20,9 +20,7 @@ interface AuthProviderProps {
 type AuthAction = { type: "LOGIN"; payload: { token: string; user: string } } | { type: "LOGOUT" };
 
 const storedSessionAuth = localStorage.getItem("sessionAuth");
-
 const parsedSessionAuth = storedSessionAuth !== null ? JSON.parse(storedSessionAuth) : null;
-
 const storedToken = parsedSessionAuth?.token || null;
 const storedUser = parsedSessionAuth?.user || null;
 

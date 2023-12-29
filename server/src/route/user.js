@@ -7,56 +7,50 @@ const { User } = require('./../class/user')
 
 // ================================================================
 
-// router.get('/user-list', function (req, res) {
+router.post('/user-new-email', function (req, res) {
+	const { id, newEmail, password } = req.body;
+	console.log(req.body)
 
-// })
+	if (!id || !newEmail || !password) {
+		return res.status(400).json({
+			message: "Помилка. Обов'язкові поля відсутні"
+		})
+	}
 
-// router.get('/user-list-data', function (req, res) {
-// 	const list = User.getList()
+	try {
+		const userToUpdate = User.getByEmail(newEmail)
 
-// 	if (list.length === 0) {
-// 		return res.status(400).json({
-// 			message: 'Список користувачів порожній'
-// 		})
-// 	}
+		if (userToUpdate) {
+			return res.status(400).json({
+				message: "Помилка. Користувач з таким email вже існує"
+			})
+		}
 
-// 	return res.status(200).json({
-// 		list: list.map((data) => ({
-// 			id: data.id,
-// 			email: data.email,
-// 		}))
-// 	})
-// })
+		const user = User.list.find(user => user.id === parseInt(id));
 
-// router.get('/user-item', function (req, res) {
+		if (!user) {
+			return res.status(400).json({
+				message: "Помилка. Користувача не знайдено"
+			});
+		}
 
-// })
-
-// router.get('/user-item-data', function (req, res) {
-// 	const { id } = req.query
-
-// 	if (!id) {
-// 		return res.status(400).json({
-// 			message: 'Потрібно передати ID користувача'
-// 		})
-// 	}
-
-// 	const user = User.getById(Number(id))
-
-// 	if (!user) {
-// 		return res.status(400).json({
-// 			message: 'Користувач з таким ID не існує'
-// 		})
-// 	}
-
-// 	return res.status(200).json({
-// 		user: {
-// 			id: user.id,
-// 			email: user.email,
-// 			isConfirm: user.isConfirm,
-// 		}
-// 	})
-// })
+		const emailChanged = user.changeEmail(newEmail);
+		if (emailChanged) {
+			return res.status(200).json({
+				message: "Email успішно змінено",
+				user
+			});
+		} else {
+			return res.status(400).json({
+				message: "Помилка зміни email"
+			});
+		}
+	} catch (err) {
+		return res.status(400).json({
+			message: "Помилка зміни email"
+		})
+	}
+})
 
 // Підключаємо роутер до бек-енду
 module.exports = router

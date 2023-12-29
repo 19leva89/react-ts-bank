@@ -60,3 +60,23 @@ a,
 	color: #fff;
 	opacity: 0.7;
 }
+
+.button__warning {
+	color: #f23152;
+	width: calc(100% - 40px);
+	background-color: #fff;
+	border: 1px solid #f23152;
+	height: 56px;
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.button__warning:hover {
+	background-color: #f23152;
+	color: #fff;
+	opacity: 0.7;
+}
+
+.button__slim {
+	height: 46px;
+}

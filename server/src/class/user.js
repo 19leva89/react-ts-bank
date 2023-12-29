@@ -26,6 +26,16 @@ class User {
 			) || null
 		);
 	}
+
+	changeEmail(newEmail) {
+		const user = User.getByEmail(this.email);
+		if (user) {
+			user.email = String(newEmail).toLowerCase();
+			this.email = String(newEmail).toLowerCase();
+			return true; // Електронна адреса успішно змінена
+		}
+		return false; // Користувач не знайдений
+	}
 }
 
 module.exports = { User }

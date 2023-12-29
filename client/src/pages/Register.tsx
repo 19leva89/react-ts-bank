@@ -84,7 +84,7 @@ const RegisterPage: FC = () => {
         // Обробити помилку від fetch
         console.error("Fetch error:", err);
       }
-    } 
+    }
   };
 
   return (
