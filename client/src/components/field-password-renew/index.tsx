@@ -8,7 +8,7 @@ type FieldPasswordNewProps = {
   onPasswordNewChangeLog: (name: string, value: string) => void;
 };
 
-export const FieldPasswordNew: FC<FieldPasswordNewProps> = ({
+export const FieldPasswordRenew: FC<FieldPasswordNewProps> = ({
   name,
   placeholder,
   label,

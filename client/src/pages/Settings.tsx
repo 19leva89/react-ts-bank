@@ -1,17 +1,14 @@
 import { FC, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/AuthProvider";
 import { validateEmail } from "../utils/validators";
 
-import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
+import { Field } from "../components/field";
 import { FieldPasswordLogin } from "../components/field-password-login";
+import { FieldPasswordRenew } from "../components/field-password-renew";
 import { Divider } from "../components/divider";
-import { FieldPasswordNew } from "../components/field-password-new";
-import { saveSession } from "../script/session";
 
 const SettingsPage: FC = () => {
-  const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [isFormEmailValid, setIsFormEmailValid] = useState(false);
   const [isFormPasswordEmailValid, setIsFormPasswordEmailValid] = useState(false);
@@ -189,7 +186,7 @@ const SettingsPage: FC = () => {
           </div>
 
           <div className="form__item form__item--slim">
-            <FieldPasswordNew
+            <FieldPasswordRenew
               label="New password"
               name="newPassword"
               placeholder="Password"
