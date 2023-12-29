@@ -19,15 +19,19 @@ interface AuthProviderProps {
 
 type AuthAction = { type: "LOGIN"; payload: { token: string; user: string } } | { type: "LOGOUT" };
 
-const storedToken = localStorage.getItem("token");
-const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+const storedSessionAuth = localStorage.getItem("sessionAuth");
 
-console.log(storedUser);
-console.log(typeof storedUser === "object" && storedUser !== null);
+const parsedSessionAuth = storedSessionAuth !== null ? JSON.parse(storedSessionAuth) : null;
+
+const storedToken = parsedSessionAuth?.token || null;
+const storedUser = parsedSessionAuth?.user || null;
+
+// console.log(storedToken);
+// console.log(storedUser);
 
 const initialState: AuthState = {
-  token: storedToken || null,
-  user: Object.keys(storedUser).length ? storedUser : null,
+  token: storedToken,
+  user: storedUser,
 };
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {

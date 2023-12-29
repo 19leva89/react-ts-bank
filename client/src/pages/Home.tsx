@@ -25,18 +25,13 @@ const WelcomePage: FC = () => {
       </section>
 
       <div className="wrapper__button">
-        <Button
-          name="Register"
-          className="button button__primary"
-          href="/register"
-          onClick={handleRegisterClick}
-        />
-        <Button
-          name="Login"
-          className="button button__transparent"
-          href="/login"
-          onClick={handleLoginClick}
-        />
+        <Button className="button button__primary" link="/register" onClick={handleRegisterClick}>
+          <span className="button--name">Register</span>
+        </Button>
+
+        <Button className="button button__transparent" link="/login" onClick={handleLoginClick}>
+          <span className="button--name">Login</span>
+        </Button>
       </div>
     </main>
   );

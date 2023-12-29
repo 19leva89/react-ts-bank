@@ -68,7 +68,11 @@ const LoginPage: FC = () => {
           const { token, user } = data.session;
           authContext.login(token, user);
 
-          navigate("/register-confirm");
+          if (data.session.user.isConfirm) {
+            navigate("/balance");
+          } else {
+            navigate("/register-confirm");
+          }
         } else {
           if (data && data.message) {
             // Обробка повідомлення про помилку з сервера

@@ -1,22 +1,49 @@
 import { FC } from "react";
 import backgroundBalance from "./../img/background-balance.png";
-import menu from "./../img/menu.svg";
+import settings from "./../img/settings.svg";
 import menuNotification from "./../img/bell-ringing.svg";
 import receive from "./../img/receive.svg";
 import send from "./../img/send.svg";
 import stripe from "./../img/stripe.svg";
 import coinbase from "./../img/coinbase.svg";
 import user from "./../img/user.svg";
+import { Button } from "../components/button";
 
 const BalancePage: FC = () => {
+  const handleSettingsClick = () => {
+    // Логіка для обробки кліку на кнопку Login
+    // console.log("Login button clicked");
+  };
+
+  const handleNotificationClick = () => {
+    // Логіка для обробки кліку на кнопку Login
+    // console.log("Login button clicked");
+  };
+
+  const handleReciveClick = () => {
+    // Логіка для обробки кліку на кнопку Login
+    // console.log("Login button clicked");
+  };
+
+  const handleSendClick = () => {
+    // Логіка для обробки кліку на кнопку Login
+    // console.log("Login button clicked");
+  };
+
   return (
     <main>
       <img className="background-balance--img" src={backgroundBalance} alt="background balance" />
 
       <section className="wrapper__menu">
-        <img className="menu" src={menu} alt="Menu" />
+        <Button className="" link="/settings" onClick={handleSettingsClick}>
+          <img className="menu__settings" src={settings} alt="Menu" />
+        </Button>
+
         <p className="menu__text">Main wallet</p>
-        <img className="menu__notification" src={menuNotification} alt="Notification" />
+
+        <Button className="" link="/notifications" onClick={handleNotificationClick}>
+          <img className="menu__notification" src={menuNotification} alt="Notification" />
+        </Button>
       </section>
 
       <section className="wrapper__balance">
@@ -25,12 +52,16 @@ const BalancePage: FC = () => {
 
       <section className="wrapper__transaction">
         <div className="transaction__receive">
-          <img className="transaction__img" src={receive} alt="Receive" />
+          <Button className="" link="/recive" onClick={handleReciveClick}>
+            <img className="transaction__img" src={receive} alt="Receive" />
+          </Button>
           <span className="transaction__title">Receive</span>
         </div>
 
         <div className="transaction__send">
-          <img className="transaction__img" src={send} alt="Send" />
+          <Button className="" link="/send" onClick={handleSendClick}>
+            <img className="transaction__img" src={send} alt="Send" />
+          </Button>
           <span className="transaction__title">Send</span>
         </div>
       </section>

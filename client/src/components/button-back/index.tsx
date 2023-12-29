@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
-import backButton from "./back-button.svg";
+import buttonBack from "./button-back.svg";
 import "./style.css";
 
 export const ButtonBack: FC = () => {
@@ -14,7 +14,7 @@ export const ButtonBack: FC = () => {
 
   return (
     <div className="button button__back" onClick={handleClick}>
-      <img src={backButton} alt="<" width="24" height="24" />
+      <img src={buttonBack} alt="<" width="24" height="24" />
     </div>
   );
 };
