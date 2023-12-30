@@ -1,7 +1,7 @@
 import { FC } from "react";
 import backgroundBalance from "./../img/background-balance.png";
 import settings from "./../img/settings.svg";
-import menuNotification from "./../img/bell-ringing.svg";
+import menuNotification from "./../img/notification-ico.svg";
 import receive from "./../img/receive.svg";
 import send from "./../img/send.svg";
 import stripe from "./../img/stripe.svg";

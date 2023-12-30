@@ -51,7 +51,13 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   }
 };
 
-export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+export const AuthContext = createContext<AuthContextProps>({
+  authState: { token: null, user: null },
+  isLogged: false,
+  login: () => {},
+  logout: () => {},
+  update: () => {},
+});
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [authState, dispatch]: [AuthState, Dispatch<AuthAction>] = useReducer(

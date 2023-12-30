@@ -36,6 +36,14 @@ class User {
 		}
 		return false; // Користувач не знайдений
 	}
+
+	changePassword(password, newPassword) {
+		if (this.password === password) {
+			this.password = String(newPassword);
+			return true; // Пароль успішно змінено
+		}
+		return false; // Неправильний старий пароль
+	}
 }
 
 module.exports = { User }

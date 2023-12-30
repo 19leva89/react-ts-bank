@@ -33,6 +33,11 @@ body {
 .background-balance--img {
 }
 
+.main__container--gray {
+	height: 100%;
+	background: #f5f5f7;
+}
+
 .wrapper__menu {
 	position: absolute;
 	top: calc(50% - 360px);
@@ -286,6 +291,63 @@ body {
 	flex-wrap: nowrap;
 	gap: 8px;
 	width: calc(100% - 40px);
+}
+
+.notifications__container {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	gap: 12px;
+	background: #f5f5f7;
+}
+
+.notification__wrapper {
+	padding: 16px;
+	border-radius: 12px;
+	background: #fff;
+	width: calc(100% - 40px);
+	margin: 0 20px;
+}
+
+.notification__item {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	gap: 12px;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.notification__content {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	gap: 8px;
+}
+
+.notification__title {
+	color: #1d1d1f;
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.notification__subtitle {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	gap: 8px;
+}
+
+.notification__time {
+	color: #939199;
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.notification__event {
+	color: #939199;
+	font-size: 12px;
+	font-weight: 400;
 }
 
 .alert {

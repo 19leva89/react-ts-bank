@@ -1,6 +1,7 @@
 import { FC, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/AuthProvider";
-import { validateEmail } from "../utils/validators";
+import { validateEmail, validatePassword } from "../utils/validators";
 
 import { ButtonBack } from "../components/button-back";
 import { Field } from "../components/field";
@@ -10,8 +11,10 @@ import { Divider } from "../components/divider";
 
 const SettingsPage: FC = () => {
   const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
   const [isFormEmailValid, setIsFormEmailValid] = useState(false);
-  const [isFormPasswordEmailValid, setIsFormPasswordEmailValid] = useState(false);
+  const [isFormPasswordValid, setIsFormPasswordValid] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -23,7 +26,7 @@ const SettingsPage: FC = () => {
 
     setIsFormEmailValid(isNewEmailValid && isPasswordValid);
 
-    setIsFormPasswordEmailValid(isPasswordValid && isNewPasswordValid);
+    setIsFormPasswordValid(isPasswordValid && isNewPasswordValid);
   }, [newEmail, password, newPassword]);
 
   const handleInputChangeEmail = (name: string, value: string | boolean) => {
@@ -38,7 +41,13 @@ const SettingsPage: FC = () => {
     }
 
     if (name === "password") {
-      setPassword(value as string);
+      const isValidPassword = validatePassword(value as string);
+
+      if (isValidPassword) {
+        setPassword(value as string);
+      } else {
+        setPassword("");
+      }
     }
   };
 
@@ -48,7 +57,13 @@ const SettingsPage: FC = () => {
     }
 
     if (name === "newPassword") {
-      setNewPassword(value as string);
+      const isValidPassword = validatePassword(value as string);
+
+      if (isValidPassword) {
+        setNewPassword(value as string);
+      } else {
+        setNewPassword("");
+      }
     }
   };
 
@@ -117,10 +132,61 @@ const SettingsPage: FC = () => {
 
   const handleSubmitChangePassword = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+
+    if (isFormPasswordValid && authContext) {
+      const storedSessionAuth = localStorage.getItem("sessionAuth");
+      const sessionAuth = storedSessionAuth ? JSON.parse(storedSessionAuth) : null;
+      const userId = sessionAuth?.user?.id;
+
+      if (!userId) {
+        console.error("User ID not found");
+        return;
+      }
+
+      const userData = {
+        id: userId,
+        password: password,
+        newPassword: newPassword,
+      };
+
+      try {
+        const res = await fetch("http://localhost:4000/user-new-password", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
+
+        const data = await res.json();
+        console.log("Data from server:", data);
+
+        if (res.ok) {
+          const token: string | null = authContext.authState.token;
+          const updatedToken: string = token !== null ? token : "";
+          authContext.update(updatedToken, data.user.password);
+        } else {
+          if (data && data.message) {
+            // Обробка повідомлення про помилку з сервера
+            console.error("Server error:", data.message);
+          } else {
+            // Обробка загальної помилки від сервера
+            console.error("Server error:", res.statusText);
+          }
+        }
+      } catch (err) {
+        // Обробити помилку від fetch
+        console.error("Fetch error:", err);
+      }
+    }
   };
 
   const handleSubmitLogout = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+
+    logout();
+    localStorage.removeItem("sessionAuth");
+    navigate("/");
   };
 
   return (
@@ -197,10 +263,10 @@ const SettingsPage: FC = () => {
 
         <button
           className={`button button__transparent button__slim ${
-            isFormPasswordEmailValid ? "" : "button--disabled"
+            isFormPasswordValid ? "" : "button--disabled"
           }`}
           type="submit"
-          disabled={!isFormPasswordEmailValid}
+          disabled={!isFormPasswordValid}
         >
           Save Password
         </button>
