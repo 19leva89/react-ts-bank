@@ -3,7 +3,7 @@ import { validateCode } from "../utils/validators";
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../utils/AuthProvider";
+import { AuthContext } from "../utils/AuthContext";
 import { getTokenSession, saveSession } from "../script/session";
 
 const RegisterConfirmPage: FC = () => {

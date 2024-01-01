@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../utils/AuthProvider";
+import { AuthContext } from "../utils/AuthContext";
 import { validateEmail, validatePassword } from "../utils/validators";
 
 import { ButtonBack } from "../components/button-back";

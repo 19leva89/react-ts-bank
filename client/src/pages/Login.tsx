@@ -1,7 +1,7 @@
 import { FC, useState, useEffect, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { validateEmail } from "../utils/validators";
-import { AuthContext } from "../utils/AuthProvider";
+import { AuthContext } from "../utils/AuthContext";
 
 import { Field } from "../components/field";
 import { FieldPasswordLogin } from "../components/field-password-login";

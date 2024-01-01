@@ -1,6 +1,7 @@
-import { FC, ReactNode, useContext, useState } from "react";
+import { FC, ReactNode, useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AuthContext, AuthProvider } from "./utils/AuthProvider";
+import { AuthProvider } from "./utils/AuthProvider";
+import { AuthContext } from "./utils/AuthContext";
 
 import WelcomePage from "./pages/Home";
 import LoginPage from "./pages/Login";
