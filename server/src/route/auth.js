@@ -12,12 +12,15 @@ User.create({
 	password: '22vFq1989',
 })
 
+User.create({
+	email: 'mail@gmail.com',
+	password: '22vFq1989',
+})
+
 Confirm.create("19leva89@gmail.com")
+Confirm.create("mail@gmail.com")
 
 // ================================================================
-
-router.get('/register', function (req, res) {
-})
 
 router.post('/register', function (req, res) {
 	const { email, password } = req.body
@@ -53,9 +56,6 @@ router.post('/register', function (req, res) {
 	}
 })
 
-router.get('/recovery', function (req, res) {
-})
-
 router.post('/recovery', function (req, res) {
 	const { email } = req.body
 
@@ -87,9 +87,6 @@ router.post('/recovery', function (req, res) {
 			message: err.message
 		})
 	}
-})
-
-router.get('/recovery-confirm', function (req, res) {
 })
 
 router.post('/recovery-confirm', function (req, res) {
@@ -137,9 +134,6 @@ router.post('/recovery-confirm', function (req, res) {
 		})
 	}
 
-})
-
-router.get('/register-confirm', function (req, res) {
 })
 
 router.post('/register-confirm', function (req, res) {
@@ -191,9 +185,6 @@ router.post('/register-confirm', function (req, res) {
 			message: err.message
 		})
 	}
-})
-
-router.get('/login', function (req, res) {
 })
 
 router.post('/login', function (req, res) {

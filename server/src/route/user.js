@@ -4,6 +4,9 @@ const express = require('express')
 const router = express.Router()
 
 const { User } = require('./../class/user')
+const { Session } = require('./../class/session')
+const { Transaction } = require('./../class/transaction')
+
 
 // ================================================================
 
@@ -89,41 +92,60 @@ router.post('/user-new-password', function (req, res) {
 	}
 })
 
-router.get('/user-notifications/:id', function (req, res) {
-	const userId = req.params.id;
+router.get('/user-notifications/', function (req, res) {
+	const token = req.headers.authorization;
 
-	// Пошук користувача за ідентифікатором
-	const user = User.list.find(user => user.id === parseInt(userId));
-
-	if (!user) {
-		// Якщо користувача не знайдено, поверніть відповідний статус та повідомлення
-		return res.status(404).json({
-			message: "Користувача не знайдено"
+	if (!token) {
+		return res.status(401).json({
+			message: "Необхідна авторизація для отримання нотифікацій",
 		});
 	}
 
-	// Повернення списку нотифікацій користувача
+	const session = Session.get(token); // Знаходження сесії за токеном
+
+	if (!session) {
+		return res.status(401).json({
+			message: "Недійсний токен сесії, авторизація відхилена",
+		});
+	}
+
+	const user = User.list.find(user => user.id === session.user.id);
+
+	if (!user) {
+		return res.status(404).json({
+			message: "Користувача не знайдено",
+		});
+	}
+
 	res.status(200).json({
-		notifications: user.notifications
+		notifications: user.notifications,
 	});
 });
 
 router.post('/user-notifications', function (req, res) {
-	const { id, eventType, time } = req.body;
-	console.log(req.body)
+	const { eventTitle, eventTime, eventType } = req.body;
+	const token = req.headers.authorization;
 
-	if (!id || !eventType || !time) {
+	if (!eventTitle || !eventTime || !eventType || !token) {
 		return res.status(400).json({
-			message: "Помилка. Обов'язкові поля відсутні"
-		})
+			message: "Error: Required fields are missing",
+		});
 	}
 
 	try {
-		const user = User.list.find(user => user.id === parseInt(id));
+		const session = Session.get(token);
+
+		if (!session) {
+			return res.status(400).json({
+				message: "Error: Invalid session or unauthorized access",
+			});
+		}
+
+		const user = User.list.find((user) => user.id === session.user.id);
 
 		if (!user) {
 			return res.status(400).json({
-				message: "Помилка. Користувача не знайдено"
+				message: "Error: User not found",
 			});
 		}
 
@@ -131,19 +153,153 @@ router.post('/user-notifications', function (req, res) {
 			user.notifications = [];
 		}
 
-		user.notifications.push({ eventType, time });
+		user.notifications.push({ eventTitle, eventTime, eventType });
 
 		res.status(200).json({
-			message: "Нотифікація збережена успішно",
-			notifications: user.notifications
+			message: "Notification saved successfully",
+			notifications: user.notifications,
 		});
-
 	} catch (err) {
+		console.error("Error processing request:", err);
 		res.status(500).json({
-			message: "Сталася помилка під час обробки запиту"
+			message: "An error occurred while processing the request",
 		});
 	}
-})
+});
+
+router.post('/user-receive', function (req, res) {
+	const { paymentSystem, amount, status } = req.body;
+	const token = req.headers.authorization;
+
+	if (!paymentSystem || !amount || !status || !token) {
+		return res.status(400).json({
+			message: "Error: Required fields are missing",
+		});
+	}
+
+	try {
+		const session = Session.get(token);
+
+		if (!session) {
+			return res.status(400).json({
+				message: "Error: Invalid session or unauthorized access",
+			});
+		}
+
+		const user = User.list.find((user) => user.id === session.user.id);
+
+		if (!user) {
+			return res.status(400).json({
+				message: "Error: User not found",
+			});
+		}
+
+		user.depositBalance(amount);
+
+
+		const newTransaction = Transaction.create(token, paymentSystem, amount, status)
+		// console.log("Receipt newTransaction:", newTransaction)
+
+		res.status(200).json({
+			message: "Баланс поповнено успішно",
+			transaction: newTransaction,
+		});
+	} catch (err) {
+		console.error("Error processing request:", err);
+		res.status(500).json({
+			message: "An error occurred while processing the request",
+		});
+	}
+});
+
+router.post('/user-send', function (req, res) {
+	const { email, paymentSystem, amount, status } = req.body;
+	const token = req.headers.authorization;
+
+	if (!email || !paymentSystem || !amount || !status || !token) {
+		return res.status(400).json({
+			message: "Error: Required fields are missing",
+		});
+	}
+
+	try {
+		const session = Session.get(token);
+		if (!session) {
+			return res.status(400).json({
+				message: "Error: Invalid session or unauthorized access",
+			});
+		}
+
+		const sender = User.list.find((user) => user.id === session.user.id);
+		if (!sender) {
+			return res.status(400).json({
+				message: "Error: Sender not found",
+			});
+		}
+
+		const recipient = User.list.find((user) => user.email === email);
+		if (!recipient) {
+			return res.status(400).json({
+				message: "Error: Recipient not found",
+			});
+		}
+
+		if (sender.balance < amount) {
+			return res.status(400).json({
+				message: "Error: Insufficient balance",
+			});
+		}
+
+		sender.withdrawBalance(amount);
+		recipient.depositBalance(amount);
+
+		const newTransaction = Transaction.create(token, paymentSystem, amount, status)
+		// console.log("Sending newTransaction:", newTransaction)
+
+		res.status(200).json({
+			message: "Баланс поповнено успішно",
+			transaction: newTransaction,
+		});
+	} catch (err) {
+		console.error("Error processing request:", err);
+		res.status(500).json({
+			message: "An error occurred while processing the request",
+		});
+	}
+});
+
+router.get('/user-balance', function (req, res) {
+	const token = req.headers.authorization;
+
+	if (!token) {
+		return res.status(401).json({
+			message: "Необхідна авторизація для отримання нотифікацій",
+		});
+	}
+
+	const session = Session.get(token); // Знаходження сесії за токеном
+
+	if (!session) {
+		return res.status(401).json({
+			message: "Недійсний токен сесії, авторизація відхилена",
+		});
+	}
+
+	const user = User.list.find(user => user.id === session.user.id);
+
+	if (!user) {
+		return res.status(404).json({
+			message: "Користувача не знайдено",
+		});
+	}
+
+	const userBalance = user.getBalance();
+
+	res.status(200).json({
+		message: "Баланс завантажено",
+		userBalance
+	});
+});
 
 // Підключаємо роутер до бек-енду
 module.exports = router

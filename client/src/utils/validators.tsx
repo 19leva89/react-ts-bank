@@ -10,6 +10,6 @@ export const validateCode = (code: string): boolean => {
   return /^\d{4}$/.test(code);
 };
 
-export const validateSum = (sum: string): boolean => {
-  return /^(?!0+(\.0+)?$)\d+(\.\d{1,2})?$/.test(sum);
+export const validateAmount = (amount: string): boolean => {
+  return /^(?!0+(\.0+)?$)\d+(\.\d{1,2})?$/.test(amount);
 };

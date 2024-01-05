@@ -1,9 +1,15 @@
-import { useState, useEffect, FC, SetStateAction } from "react";
+import { useState, useEffect, FC, SetStateAction, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../utils/authProvider";
 import { validateEmail } from "../utils/validators";
+import { saveSession } from "../script/session";
+
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
 
 const RecoveryPage: FC = () => {
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
   const [isFormValid, setIsFormValid] = useState(false);
   const [email, setEmail] = useState("");
 
@@ -27,9 +33,43 @@ const RecoveryPage: FC = () => {
     }
   };
 
-  const handleSubmit = (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    // Виконайте логіку для відправки форми, якщо isFormValid === true
+
+    if (isFormValid && authContext) {
+      const userData = {
+        email: email,
+      };
+
+      try {
+        const res = await fetch("http://localhost:4000/recovery", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
+
+        const data = await res.json();
+        console.log("Data from server:", data);
+
+        if (res.ok) {
+          saveSession(data.session);
+          navigate("/recovery-confirm");
+        } else {
+          if (data && data.message) {
+            // Обробка повідомлення про помилку з сервера
+            console.error("Server error:", data.message);
+          } else {
+            // Обробка загальної помилки від сервера
+            console.error("Server error:", res.statusText);
+          }
+        }
+      } catch (err) {
+        // Обробити помилку від fetch
+        console.error("Fetch error:", err);
+      }
+    }
   };
 
   return (

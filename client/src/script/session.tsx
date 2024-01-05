@@ -2,11 +2,7 @@ export const SESSION_KEY = "sessionAuth";
 
 export interface Session {
   token: string;
-  user: {
-    email: string;
-    isConfirm: boolean;
-    id: number;
-  };
+  user: { email: string; isConfirm: boolean; id: number };
 }
 
 export const saveSession = (session: Session): void => {

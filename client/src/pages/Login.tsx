@@ -1,12 +1,12 @@
 import { FC, useState, useEffect, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { validateEmail } from "../utils/validators";
-import { AuthContext } from "../utils/AuthContext";
+import { AuthContext } from "../utils/authProvider";
+import { saveSession } from "../script/session";
 
 import { Field } from "../components/field";
 import { FieldPasswordLogin } from "../components/field-password-login";
 import { ButtonBack } from "../components/button-back";
-import { saveSession } from "../script/session";
 
 const LoginPage: FC = () => {
   const navigate = useNavigate();

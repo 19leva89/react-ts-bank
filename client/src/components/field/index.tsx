@@ -1,15 +1,15 @@
 import { FC, Fragment, useEffect, useRef, useState, ChangeEvent } from "react";
-import { validateCode, validateEmail, validateSum } from "../../utils/validators";
+import { validateCode, validateEmail, validateAmount } from "../../utils/validators";
 import "./style.css";
 
 type FieldProps = {
   type: string;
   name: string;
-  label: string;
+  label?: string;
   placeholder: string;
   onEmailChange?: (name: string, value: string) => void;
   onNewEmailChange?: (name: string, value: string) => void;
-  onSumChange?: (name: string, value: string) => void;
+  onAmountChange?: (name: string, value: string) => void;
   onCodeChange?: (name: string, value: string) => void;
 };
 
@@ -20,7 +20,7 @@ export const Field: FC<FieldProps> = ({
   label,
   onEmailChange,
   onNewEmailChange,
-  onSumChange,
+  onAmountChange,
   onCodeChange,
 }) => {
   const [error, setError] = useState("");
@@ -62,15 +62,15 @@ export const Field: FC<FieldProps> = ({
       }
     }
 
-    if (name === "sum") {
-      const isValidSum = validateSum(value);
+    if (name === "amount") {
+      const isValidAmount = validateAmount(value);
 
-      if (!isValidSum) {
+      if (!isValidAmount) {
         setError("Введіть коректне число більше нуля");
       } else {
         setError("");
-        if (onSumChange) {
-          onSumChange(name, value);
+        if (onAmountChange) {
+          onAmountChange(name, value);
         }
       }
     }

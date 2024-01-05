@@ -7,14 +7,14 @@ export enum REQUEST_ACTION_TYPE {
   RESET = "reset",
 }
 
-type RequestState = {
+interface RequestState {
   status: REQUEST_ACTION_TYPE;
   message: string | null;
   data: {
     list: any[];
     isEmpty: boolean;
   } | null;
-};
+}
 
 type RequestAction =
   | { type: REQUEST_ACTION_TYPE.PROGRESS }

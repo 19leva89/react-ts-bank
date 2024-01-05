@@ -1,7 +1,6 @@
 import { FC, ReactNode, useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AuthProvider } from "./utils/AuthProvider";
-import { AuthContext } from "./utils/AuthContext";
+import { AuthContext, AuthProvider } from "./utils/authProvider";
 
 import WelcomePage from "./pages/Home";
 import LoginPage from "./pages/Login";
@@ -12,7 +11,7 @@ import RecoveryConfirmPage from "./pages/RecoveryConfirm";
 import BalancePage from "./pages/Balance";
 import SettingsPage from "./pages/Settings";
 import NotificationsPage from "./pages/Notifications";
-import RecivePage from "./pages/Recive";
+import ReceivePage from "./pages/Receive";
 import SendPage from "./pages/Send";
 import TransactionPage from "./pages/Transaction";
 import NotFound from "./pages/NotFound";
@@ -118,10 +117,10 @@ function App() {
             }
           />
           <Route
-            path="/recive"
+            path="/receive"
             element={
               <PrivateRoute>
-                <RecivePage />
+                <ReceivePage />
               </PrivateRoute>
             }
           />

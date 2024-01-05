@@ -265,11 +265,16 @@ body {
 }
 
 .form__text--big {
+	margin: 0;
 	margin-top: 12px;
 	color: #000;
-	text-align: center;
 	font-size: 16px;
 	font-weight: 500;
+}
+
+.form__text--left {
+	text-align: left;
+	margin-left: 20px;
 }
 
 .form__error {
@@ -299,6 +304,8 @@ body {
 	flex-wrap: nowrap;
 	gap: 12px;
 	background: #f5f5f7;
+	overflow-y: auto;
+	max-height: 730px;
 }
 
 .notification__wrapper {
@@ -348,6 +355,40 @@ body {
 	color: #939199;
 	font-size: 12px;
 	font-weight: 400;
+}
+
+.receive__container {
+	margin-top: 32px;
+}
+
+.payment__container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.payment__wrapper {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.payment__title {
+	color: #1d1d1f;
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.payment__ico {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	gap: 8px;
 }
 
 .alert {

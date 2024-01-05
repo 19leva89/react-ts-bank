@@ -6,7 +6,7 @@ type ButtonProps = {
   children: ReactNode;
   className: string;
   link: string;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 export const Button: FC<ButtonProps> = ({ children, className, link, onClick }) => {

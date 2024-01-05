@@ -1,10 +1,11 @@
 import { FC, useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { validateCode } from "../utils/validators";
+import { AuthContext } from "../utils/authProvider";
+import { getTokenSession, saveSession } from "../script/session";
+
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../utils/AuthContext";
-import { getTokenSession, saveSession } from "../script/session";
 
 const RegisterConfirmPage: FC = () => {
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ const RegisterConfirmPage: FC = () => {
         code: Number(code),
         token: token,
       };
+      console.log("register-confirm userData:", userData);
 
       try {
         const res = await fetch("http://localhost:4000/register-confirm", {
@@ -57,7 +59,7 @@ const RegisterConfirmPage: FC = () => {
           saveSession(data.session);
 
           const { token, user } = data.session;
-          authContext.update(token, user);
+          authContext.dataUpdate(token, user);
 
           navigate("/balance");
         } else {

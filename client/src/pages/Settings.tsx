@@ -1,6 +1,7 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../utils/AuthContext";
+
+import { AuthContext } from "../utils/authProvider";
 import { validateEmail, validatePassword } from "../utils/validators";
 
 import { ButtonBack } from "../components/button-back";
@@ -101,7 +102,7 @@ const SettingsPage: FC = () => {
         if (res.ok) {
           const token: string | null = authContext.authState.token;
           const updatedToken: string = token !== null ? token : "";
-          authContext.update(updatedToken, data.user.email);
+          authContext.changeEmail(updatedToken, data.user.email);
 
           // Отримання поточних даних з localStorage
           const storedSessionAuth = localStorage.getItem("sessionAuth");
@@ -164,7 +165,7 @@ const SettingsPage: FC = () => {
         if (res.ok) {
           const token: string | null = authContext.authState.token;
           const updatedToken: string = token !== null ? token : "";
-          authContext.update(updatedToken, data.user.password);
+          authContext.changePassword(updatedToken, data.user.password);
         } else {
           if (data && data.message) {
             // Обробка повідомлення про помилку з сервера
@@ -198,7 +199,7 @@ const SettingsPage: FC = () => {
       </div>
 
       <form action="" method="" className="form__container" onSubmit={handleSubmitChangeEmail}>
-        <p className="form__text--big">Change email</p>
+        <p className="form__text form__text--big">Change email</p>
 
         <div className="form form--slim">
           <div className="form__item form__item--slim">
@@ -239,7 +240,7 @@ const SettingsPage: FC = () => {
       <Divider />
 
       <form action="" method="" className="form__container" onSubmit={handleSubmitChangePassword}>
-        <p className="form__text--big">Change password</p>
+        <p className="form__text form__text--big">Change password</p>
 
         <div className="form form--slim">
           <div className="form__item form__item--slim">

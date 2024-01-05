@@ -80,3 +80,7 @@ a,
 .button__slim {
 	height: 46px;
 }
+
+.button__fat {
+	height: 72px;
+}

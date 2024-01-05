@@ -6,7 +6,8 @@ class User {
 		this.id = User.count++;
 		this.email = String(email).toLowerCase();
 		this.password = String(password);
-		this.isConfirm = false;
+		this.isConfirm = true; // на фіналі поміняти на false
+		this.balance = 0;
 	}
 
 	static create(data) {
@@ -43,6 +44,20 @@ class User {
 			return true; // Пароль успішно змінено
 		}
 		return false; // Неправильний старий пароль
+	}
+
+	depositBalance(amount) {
+		this.balance += amount;
+		return this.balance; // Повернути оновлений баланс користувача
+	}
+
+	withdrawBalance(amount) {
+		this.balance -= amount;
+		return this.balance;
+	}
+
+	getBalance() {
+		return this.balance; // Повернути поточний баланс користувача
 	}
 }
 

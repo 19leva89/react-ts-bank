@@ -1,65 +1,72 @@
-import { FC } from "react";
+import { FC, useContext, useEffect, useState } from "react";
+import { AuthContext } from "../utils/authProvider";
+
+import { Button } from "../components/button";
 import backgroundBalance from "./../img/background-balance.png";
 import settings from "./../img/settings.svg";
 import menuNotification from "./../img/notification-ico.svg";
 import receive from "./../img/receive.svg";
 import send from "./../img/send.svg";
-import stripe from "./../img/stripe.svg";
-import coinbase from "./../img/coinbase.svg";
-import user from "./../img/user.svg";
-import { Button } from "../components/button";
+import stripe from "./../img/payment/stripe.svg";
+import coinbase from "./../img/payment/coinbase.svg";
+import userImg from "./../img/user.svg";
 
 const BalancePage: FC = () => {
-  const handleSettingsClick = () => {
-    // Логіка для обробки кліку на кнопку Login
-    // console.log("Login button clicked");
-  };
+  const authContext = useContext(AuthContext);
+  const { authState, loadBalance } = authContext;
+  // const { user } = authState;
 
-  const handleNotificationClick = () => {
-    // Логіка для обробки кліку на кнопку Login
-    // console.log("Login button clicked");
-  };
+  const [userBalance, setUserBalance] = useState<number | null>(null);
 
-  const handleReciveClick = () => {
-    // Логіка для обробки кліку на кнопку Login
-    // console.log("Login button clicked");
-  };
+  // console.log("Balance:", user, userBalance);
 
-  const handleSendClick = () => {
-    // Логіка для обробки кліку на кнопку Login
-    // console.log("Login button clicked");
-  };
+  useEffect(() => {
+    loadBalance();
+  }, []);
+
+  useEffect(() => {
+    if (
+      typeof authState.user === "object" &&
+      authState.user !== null &&
+      "balance" in authState.user
+    ) {
+      const balance = authState.user.balance;
+      setUserBalance(balance);
+    }
+  }, [authState.user]);
 
   return (
     <main>
       <img className="background-balance--img" src={backgroundBalance} alt="background balance" />
 
       <section className="wrapper__menu">
-        <Button className="" link="/settings" onClick={handleSettingsClick}>
+        <Button className="" link="/settings">
           <img className="menu__settings" src={settings} alt="Menu" />
         </Button>
 
         <p className="menu__text">Main wallet</p>
 
-        <Button className="" link="/notifications" onClick={handleNotificationClick}>
+        <Button className="" link="/notifications">
           <img className="menu__notification" src={menuNotification} alt="Notification" />
         </Button>
       </section>
 
       <section className="wrapper__balance">
-        <h1 className="balance__title">$ 100.20</h1>
+        <h1 className="balance__title">
+          {userBalance !== null ? `$ ${userBalance}` : "Завантаження..."}
+        </h1>
       </section>
 
       <section className="wrapper__transaction">
         <div className="transaction__receive">
-          <Button className="" link="/recive" onClick={handleReciveClick}>
+          <Button className="" link="/receive">
             <img className="transaction__img" src={receive} alt="Receive" />
           </Button>
           <span className="transaction__title">Receive</span>
         </div>
 
         <div className="transaction__send">
-          <Button className="" link="/send" onClick={handleSendClick}>
+          <Button className="" link="/send">
             <img className="transaction__img" src={send} alt="Send" />
           </Button>
           <span className="transaction__title">Send</span>
@@ -85,7 +92,7 @@ const BalancePage: FC = () => {
 
         <div className="movement">
           <div className="movement__content">
-            <img className="movement__img" src={user} alt="Stripe" />
+            <img className="movement__img" src={userImg} alt="Stripe" />
 
             <div className="movement__details">
               <div className="movement__name">Oleg V.</div>
