@@ -19,7 +19,7 @@ const RecoveryPage: FC = () => {
     setIsFormValid(isEmailValid);
   }, [email]);
 
-  console.log("email:", email);
+  // console.log("email:", email);
 
   const handleInput = (name: string, value: SetStateAction<string>) => {
     if (name === "email") {
@@ -51,7 +51,7 @@ const RecoveryPage: FC = () => {
         });
 
         const data = await res.json();
-        console.log("Data from server:", data);
+        // console.log("Data from server:", data);
 
         if (res.ok) {
           saveSession(data.session);
@@ -86,7 +86,7 @@ const RecoveryPage: FC = () => {
             <Field
               type="email"
               name="email"
-              placeholder="Електронна пошта"
+              placeholder="example@mail.com"
               label="Email"
               onEmailChange={handleInput}
             />

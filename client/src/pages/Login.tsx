@@ -103,7 +103,7 @@ const LoginPage: FC = () => {
             <Field
               type="email"
               name="email"
-              placeholder="Електронна пошта"
+              placeholder="example@mail.com"
               label="Email"
               onEmailChange={handleInput}
             />
@@ -113,7 +113,7 @@ const LoginPage: FC = () => {
             <FieldPasswordLogin
               label="Password"
               name="password"
-              placeholder="Пароль"
+              placeholder="password"
               onPasswordChangeLog={handleInput}
             />
           </div>

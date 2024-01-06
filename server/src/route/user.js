@@ -7,12 +7,11 @@ const { User } = require('./../class/user')
 const { Session } = require('./../class/session')
 const { Transaction } = require('./../class/transaction')
 
-
 // ================================================================
 
 router.post('/user-new-email', function (req, res) {
 	const { id, newEmail, password } = req.body;
-	console.log(req.body)
+	// console.log(req.body)
 
 	if (!id || !newEmail || !password) {
 		return res.status(400).json({
@@ -30,7 +29,6 @@ router.post('/user-new-email', function (req, res) {
 		}
 
 		const user = User.list.find(user => user.id === parseInt(id));
-
 		if (!user) {
 			return res.status(400).json({
 				message: "Помилка. Користувача не знайдено"
@@ -57,7 +55,7 @@ router.post('/user-new-email', function (req, res) {
 
 router.post('/user-new-password', function (req, res) {
 	const { id, password, newPassword } = req.body;
-	console.log(req.body)
+	// console.log(req.body)
 
 	if (!id || !password || !newPassword) {
 		return res.status(400).json({
@@ -67,7 +65,6 @@ router.post('/user-new-password', function (req, res) {
 
 	try {
 		const user = User.list.find(user => user.id === parseInt(id));
-
 		if (!user) {
 			return res.status(400).json({
 				message: "Помилка. Користувача не знайдено"
@@ -94,7 +91,6 @@ router.post('/user-new-password', function (req, res) {
 
 router.get('/user-notifications/', function (req, res) {
 	const token = req.headers.authorization;
-
 	if (!token) {
 		return res.status(401).json({
 			message: "Необхідна авторизація для отримання нотифікацій",
@@ -102,7 +98,6 @@ router.get('/user-notifications/', function (req, res) {
 	}
 
 	const session = Session.get(token); // Знаходження сесії за токеном
-
 	if (!session) {
 		return res.status(401).json({
 			message: "Недійсний токен сесії, авторизація відхилена",
@@ -110,7 +105,6 @@ router.get('/user-notifications/', function (req, res) {
 	}
 
 	const user = User.list.find(user => user.id === session.user.id);
-
 	if (!user) {
 		return res.status(404).json({
 			message: "Користувача не знайдено",
@@ -134,7 +128,6 @@ router.post('/user-notifications', function (req, res) {
 
 	try {
 		const session = Session.get(token);
-
 		if (!session) {
 			return res.status(400).json({
 				message: "Error: Invalid session or unauthorized access",
@@ -142,15 +135,10 @@ router.post('/user-notifications', function (req, res) {
 		}
 
 		const user = User.list.find((user) => user.id === session.user.id);
-
 		if (!user) {
 			return res.status(400).json({
 				message: "Error: User not found",
 			});
-		}
-
-		if (!user.notifications) {
-			user.notifications = [];
 		}
 
 		user.notifications.push({ eventTitle, eventTime, eventType });
@@ -179,7 +167,6 @@ router.post('/user-receive', function (req, res) {
 
 	try {
 		const session = Session.get(token);
-
 		if (!session) {
 			return res.status(400).json({
 				message: "Error: Invalid session or unauthorized access",
@@ -187,7 +174,6 @@ router.post('/user-receive', function (req, res) {
 		}
 
 		const user = User.list.find((user) => user.id === session.user.id);
-
 		if (!user) {
 			return res.status(400).json({
 				message: "Error: User not found",
@@ -196,13 +182,14 @@ router.post('/user-receive', function (req, res) {
 
 		user.depositBalance(amount);
 
+		const userTransaction = Transaction.create(token, paymentSystem, amount, status, user.id)
+		user.addTransaction(userTransaction);
 
-		const newTransaction = Transaction.create(token, paymentSystem, amount, status)
-		// console.log("Receipt newTransaction:", newTransaction)
+		// console.log("Receive userTransaction:", userTransaction)
 
 		res.status(200).json({
 			message: "Баланс поповнено успішно",
-			transaction: newTransaction,
+			transaction: userTransaction,
 		});
 	} catch (err) {
 		console.error("Error processing request:", err);
@@ -253,12 +240,27 @@ router.post('/user-send', function (req, res) {
 		sender.withdrawBalance(amount);
 		recipient.depositBalance(amount);
 
-		const newTransaction = Transaction.create(token, paymentSystem, amount, status)
-		// console.log("Sending newTransaction:", newTransaction)
+		// Створення транзакції для sender
+		const senderTransaction = Transaction.create(token, paymentSystem, amount, status, sender.id, sender.img);
+		sender.addTransaction(senderTransaction);
+
+		// Створення транзакції для recipient
+		const recipientTransaction = Transaction.create(token, paymentSystem, amount, "Receive", recipient.id, recipient.img);
+		recipient.addTransaction(recipientTransaction);
+
+		const eventTitle = "receive";
+		const eventTime = new Date().toISOString();
+		const eventType = "Announcement";
+
+		if (!recipient.notifications) {
+			recipient.notifications = [];
+		}
+
+		recipient.notifications.push({ eventTitle, eventTime, eventType });
 
 		res.status(200).json({
-			message: "Баланс поповнено успішно",
-			transaction: newTransaction,
+			message: "Balance replenished successfully",
+			transaction: senderTransaction,
 		});
 	} catch (err) {
 		console.error("Error processing request:", err);
@@ -270,7 +272,6 @@ router.post('/user-send', function (req, res) {
 
 router.get('/user-balance', function (req, res) {
 	const token = req.headers.authorization;
-
 	if (!token) {
 		return res.status(401).json({
 			message: "Необхідна авторизація для отримання нотифікацій",
@@ -278,7 +279,6 @@ router.get('/user-balance', function (req, res) {
 	}
 
 	const session = Session.get(token); // Знаходження сесії за токеном
-
 	if (!session) {
 		return res.status(401).json({
 			message: "Недійсний токен сесії, авторизація відхилена",
@@ -286,7 +286,6 @@ router.get('/user-balance', function (req, res) {
 	}
 
 	const user = User.list.find(user => user.id === session.user.id);
-
 	if (!user) {
 		return res.status(404).json({
 			message: "Користувача не знайдено",
@@ -298,6 +297,53 @@ router.get('/user-balance', function (req, res) {
 	res.status(200).json({
 		message: "Баланс завантажено",
 		userBalance
+	});
+});
+
+router.get('/user-transactions', function (req, res) {
+	const token = req.headers.authorization;
+	if (!token) {
+		return res.status(401).json({
+			message: "Необхідна авторизація для отримання нотифікацій",
+		});
+	}
+
+	const session = Session.get(token); // Знаходження сесії за токеном
+	if (!session) {
+		return res.status(401).json({
+			message: "Недійсний токен сесії, авторизація відхилена",
+		});
+	}
+
+	const user = User.list.find(user => user.id === session.user.id);
+	if (!user) {
+		return res.status(404).json({
+			message: "Користувача не знайдено",
+		});
+	}
+
+	const userTransactions = Transaction.list.filter(transaction => transaction.userId === user.id);
+	// console.log("server userTransactions:", userTransactions);
+
+	res.status(200).json({
+		message: "Транзакції завантажено",
+		transactions: userTransactions,
+	});
+});
+
+router.get('/user-transaction/:transactionId', function (req, res) {
+	const { transactionId } = req.params; // Отримати id транзакції з параметрів URL
+
+	const transaction = Transaction.list.find(transaction => transaction.id === Number(transactionId));
+	if (!transaction) {
+		return res.status(404).json({
+			message: "Транзакцію не знайдено",
+		});
+	}
+
+	res.status(200).json({
+		message: "Транзакція завантажена",
+		transaction: transaction,
 	});
 });
 

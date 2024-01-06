@@ -5,8 +5,10 @@ import { getTokenSession } from "../script/session";
 
 import { ButtonBack } from "../components/button-back";
 import { Field } from "../components/field";
+
 import stripe from "./../img/payment/stripe.svg";
 import coinbase from "./../img/payment/coinbase.svg";
+
 import mastercard from "./../img/payment/mastercard-ico.svg";
 import tronGreen from "./../img/payment/tron-green-ico.svg";
 import bitcoin from "./../img/payment/bitcoin-ico.svg";
@@ -54,7 +56,7 @@ const ReceivePage: FC = () => {
       const userData = {
         amount: Number(amount),
         paymentSystem: paymentSystem,
-        status: "Receipt",
+        status: "Receive",
       };
 
       try {
@@ -75,12 +77,11 @@ const ReceivePage: FC = () => {
         });
 
         const data = await res.json();
-        console.log("Data from server:", data);
+        // console.log("Data from server:", data);
 
         if (res.ok) {
           console.log("Balance successfully updated!");
 
-          // saveSession(data.session);
           authContext.receive(Number(amount));
 
           navigate("/balance");
@@ -122,7 +123,7 @@ const ReceivePage: FC = () => {
             </div>
           </div>
 
-          <Divider />
+          <Divider className="divider" />
 
           <p className="form__text form__text--big form__text--left">Payment system</p>
           <button
@@ -180,8 +181,6 @@ const ReceivePage: FC = () => {
           </div>
         </form>
       </div>
-
-      <div className="payment__container"></div>
     </main>
   );
 };

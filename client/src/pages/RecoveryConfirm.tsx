@@ -49,7 +49,7 @@ const RecoveryConfirmPage: FC = () => {
         code: Number(code),
         password: password,
       };
-      console.log("recovery-confirm userData:", userData);
+      // console.log("recovery-confirm userData:", userData);
 
       try {
         const res = await fetch("http://localhost:4000/recovery-confirm", {
@@ -60,7 +60,7 @@ const RecoveryConfirmPage: FC = () => {
           body: JSON.stringify(userData),
         });
         const data = await res.json();
-        console.log("Data from server:", data);
+        // console.log("Data from server:", data);
 
         if (res.ok) {
           saveSession(data.session);
@@ -99,7 +99,7 @@ const RecoveryConfirmPage: FC = () => {
             <Field
               type="code"
               name="code"
-              placeholder="Code"
+              placeholder="1234"
               label="Code"
               onCodeChange={handleInput}
             />

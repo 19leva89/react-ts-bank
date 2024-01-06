@@ -19,7 +19,7 @@ const RegisterConfirmPage: FC = () => {
     setIsFormValid(isPasswordValid);
   }, [code]);
 
-  console.log("code:", code);
+  // console.log("code:", code);
 
   const handleInput = (name: string, value: string | boolean) => {
     if (name === "code") {
@@ -42,7 +42,7 @@ const RegisterConfirmPage: FC = () => {
         code: Number(code),
         token: token,
       };
-      console.log("register-confirm userData:", userData);
+      // console.log("register-confirm userData:", userData);
 
       try {
         const res = await fetch("http://localhost:4000/register-confirm", {
@@ -53,7 +53,7 @@ const RegisterConfirmPage: FC = () => {
           body: JSON.stringify(userData),
         });
         const data = await res.json();
-        console.log("Data from server:", data);
+        // console.log("Data from server:", data);
 
         if (res.ok) {
           saveSession(data.session);

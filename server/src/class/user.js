@@ -6,13 +6,16 @@ class User {
 		this.id = User.count++;
 		this.email = String(email).toLowerCase();
 		this.password = String(password);
-		this.isConfirm = true; // на фіналі поміняти на false
+		this.isConfirm = false;
 		this.balance = 0;
+		this.img = "./../img/user.svg";
+		this.transactions = [];
+		this.notifications = [];
 	}
 
 	static create(data) {
 		const user = new User(data);
-		console.log(user);
+		// console.log(user);
 
 		this.list.push(user);
 		// console.log(this.list);
@@ -58,6 +61,10 @@ class User {
 
 	getBalance() {
 		return this.balance; // Повернути поточний баланс користувача
+	}
+
+	addTransaction(transaction) {
+		this.transactions.push(transaction);
 	}
 }
 

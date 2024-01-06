@@ -21,8 +21,8 @@ const SendPage: FC = () => {
     setIsFormValid(isEmailValid && isAmountValid);
   }, [email, amount]);
 
-  console.log("email:", email);
-  console.log("amount:", amount);
+  // console.log("email:", email);
+  // console.log("amount:", amount);
 
   const handleInput = (name: string, value: string | number) => {
     if (name === "email") {
@@ -59,9 +59,9 @@ const SendPage: FC = () => {
         email: email,
         amount: Number(amount),
         paymentSystem: paymentSystem,
-        status: "Sending",
+        status: "Send",
       };
-      console.log("Sending userData", userData);
+      // console.log("Send userData", userData);
 
       try {
         const token = getTokenSession(); // Отримання токену сесії
@@ -81,12 +81,11 @@ const SendPage: FC = () => {
         });
 
         const data = await res.json();
-        console.log("Data from server:", data);
+        // console.log("Data from server:", data);
 
         if (res.ok) {
           console.log("Balance successfully updated!");
 
-          // saveSession(data.session);
           authContext.send(Number(amount));
 
           navigate("/balance");
@@ -118,7 +117,7 @@ const SendPage: FC = () => {
             <Field
               type="email"
               name="email"
-              placeholder="Електронна пошта"
+              placeholder="example@mail.com"
               label="Email"
               onEmailChange={handleInput}
             />

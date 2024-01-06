@@ -101,7 +101,7 @@ const RegisterPage: FC = () => {
             <Field
               type="email"
               name="email"
-              placeholder="Електронна пошта"
+              placeholder="example@mail.com"
               label="Email"
               onEmailChange={handleInput}
             />

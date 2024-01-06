@@ -1,5 +1,8 @@
 import { FC, useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
+import { getTokenSession } from "../script/session";
+import { format } from "date-fns";
 
 import { Button } from "../components/button";
 import backgroundBalance from "./../img/background-balance.png";
@@ -9,16 +12,32 @@ import receive from "./../img/receive.svg";
 import send from "./../img/send.svg";
 import stripe from "./../img/payment/stripe.svg";
 import coinbase from "./../img/payment/coinbase.svg";
-import userImg from "./../img/user.svg";
+
+interface Transaction {
+  id: number;
+  paymentSystem: string;
+  amount: number;
+  status: string;
+  date: string | number | Date;
+  userImg?: string;
+}
+
+type PaymentSystemImages = {
+  [key: string]: string;
+};
+
+const paymentSystemImages: PaymentSystemImages = {
+  Stripe: stripe,
+  Coinbase: coinbase,
+  // Додайте інші системи оплати, які вам потрібні тут
+};
 
 const BalancePage: FC = () => {
   const authContext = useContext(AuthContext);
   const { authState, loadBalance } = authContext;
-  // const { user } = authState;
-
   const [userBalance, setUserBalance] = useState<number | null>(null);
-
-  // console.log("Balance:", user, userBalance);
+  const [transactions, setTransactions] = useState([]);
+  // console.log(transactions);
 
   useEffect(() => {
     loadBalance();
@@ -34,6 +53,37 @@ const BalancePage: FC = () => {
       setUserBalance(balance);
     }
   }, [authState.user]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const token = getTokenSession();
+
+        if (!token) {
+          console.error("Session token not found");
+          return;
+        }
+
+        const res = await fetch("http://localhost:4000/user-transactions", {
+          headers: {
+            Authorization: token,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+
+          setTransactions(data.transactions);
+        } else {
+          console.error("Failed to fetch transactions");
+        }
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
 
   return (
     <main>
@@ -53,7 +103,7 @@ const BalancePage: FC = () => {
 
       <section className="wrapper__balance">
         <h1 className="balance__title">
-          {userBalance !== null ? `$ ${userBalance}` : "Завантаження..."}
+          {userBalance !== null ? `$ ${Math.abs(userBalance).toFixed(2)}` : "Завантаження..."}
         </h1>
       </section>
 
@@ -73,55 +123,53 @@ const BalancePage: FC = () => {
         </div>
       </section>
 
-      <section className="wrapper__movement">
-        <div className="movement">
-          <div className="movement__content">
-            <img className="movement__img" src={stripe} alt="Stripe" />
+      {transactions.length > 0 && (
+        <section className="wrapper__movement">
+          {transactions.reverse().map((transaction: Transaction) => (
+            <Link className="" to={`/transaction/${transaction.id}`} key={transaction.id}>
+              <div className="movement">
+                <div className="movement__content">
+                  <img
+                    className="movement__img"
+                    src={
+                      transaction.userImg
+                        ? transaction.userImg // якщо оплата через пошту
+                        : paymentSystemImages[transaction.paymentSystem] // якщо через Stripe або Coinbase
+                    }
+                    alt={transaction.paymentSystem}
+                  />
 
-            <div className="movement__details">
-              <div className="movement__name">Stripe</div>
-              <div className="movement__specialty">
-                <div className="movement__time">12:25</div>
-                <div className="movement__status">Receipt</div>
+                  <div className="movement__details">
+                    <div className="movement__name">{transaction.paymentSystem}</div>
+                    <div className="movement__specialty">
+                      <div className="movement__time">
+                        {format(new Date(transaction.date), "HH:mm")}
+                      </div>
+                      <div className="movement__status">{transaction.status}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className={`movement__cost ${
+                    transaction.status === "Receive"
+                      ? "movement__cost--plus"
+                      : "movement__cost--minus"
+                  }`}
+                >
+                  {transaction.status === "Receive"
+                    ? `+$${Math.abs(transaction.amount)
+                        .toFixed(2)
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+                    : `-$${Math.abs(transaction.amount)
+                        .toFixed(2)
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div className="movement__cost movement__cost--plus">+$125.00</div>
-        </div>
-
-        <div className="movement">
-          <div className="movement__content">
-            <img className="movement__img" src={userImg} alt="Stripe" />
-
-            <div className="movement__details">
-              <div className="movement__name">Oleg V.</div>
-              <div className="movement__specialty">
-                <div className="movement__time">12:25</div>
-                <div className="movement__status">Sending</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="movement__cost movement__cost--minus">-$200.50</div>
-        </div>
-
-        <div className="movement">
-          <div className="movement__content">
-            <img className="movement__img" src={coinbase} alt="Stripe" />
-
-            <div className="movement__details">
-              <div className="movement__name">Coinbase</div>
-              <div className="movement__specialty">
-                <div className="movement__time">10:20</div>
-                <div className="movement__status">Receipt</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="movement__cost movement__cost--plus">+$1,200.00</div>
-        </div>
-      </section>
+            </Link>
+          ))}
+        </section>
+      )}
     </main>
   );
 };

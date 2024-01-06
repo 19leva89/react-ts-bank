@@ -149,6 +149,8 @@ body {
 	gap: 16px;
 	width: calc(100% - 40px);
 	color: #f3f5ff;
+	overflow-y: auto;
+	max-height: 530px;
 }
 
 .movement {
@@ -272,6 +274,11 @@ body {
 	font-weight: 500;
 }
 
+.form__text--h1 {
+	font-size: 38px;
+	font-weight: 600;
+}
+
 .form__text--left {
 	text-align: left;
 	margin-left: 20px;
@@ -389,6 +396,32 @@ body {
 	flex-direction: row;
 	flex-wrap: nowrap;
 	gap: 8px;
+}
+
+.transaction__wrapper {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 16px;
+	width: calc(100% - 40px);
+	padding: 14px;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.transaction__date,
+.transaction__address,
+.transaction__type {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	color: #1d1d1f;
+	font-size: 16px;
+	font-weight: 400;
 }
 
 .alert {

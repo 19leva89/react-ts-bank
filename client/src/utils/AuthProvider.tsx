@@ -43,7 +43,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const isLogged = !!authState.token;
 
   const login = (token: string, user: string) => {
-    console.log("authState.user", authState.user);
+    // console.log("authState.user", authState.user);
 
     dispatch({ type: AUTH_ACTION_TYPE.LOGIN, payload: { token, user } });
 
@@ -115,7 +115,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       });
 
       const data = await res.json();
-      console.log("Data from server addNotification:", data);
+      // console.log("Data from server addNotification:", data);
 
       if (res.ok) {
         dispatch({
@@ -238,7 +238,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     loadBalance,
   };
 
-  console.log(authState, isLogged);
+  // console.log(authState, isLogged);
 
   return <AuthContext.Provider value={authContextData}>{children}</AuthContext.Provider>;
 };

@@ -24,7 +24,7 @@ Confirm.create("mail@gmail.com")
 
 router.post('/register', function (req, res) {
 	const { email, password } = req.body
-	console.log(req.body)
+	// console.log(req.body)
 
 	if (!email || !password) {
 		return res.status(400).json({
@@ -34,7 +34,6 @@ router.post('/register', function (req, res) {
 
 	try {
 		const user = User.getByEmail(email)
-
 		if (user) {
 			return res.status(400).json({
 				message: "Помилка. Такий користувач вже існує"
@@ -59,7 +58,7 @@ router.post('/register', function (req, res) {
 router.post('/recovery', function (req, res) {
 	const { email } = req.body
 
-	console.log(email)
+	// console.log(email)
 
 	if (!email) {
 		return res.status(400).json({
@@ -92,7 +91,7 @@ router.post('/recovery', function (req, res) {
 router.post('/recovery-confirm', function (req, res) {
 	const { password, code } = req.body
 
-	console.log(password, code)
+	// console.log(password, code)
 
 	if (!code || !password) {
 		return res.status(400).json({
@@ -102,7 +101,6 @@ router.post('/recovery-confirm', function (req, res) {
 
 	try {
 		const email = Confirm.getData(Number(code))
-
 		if (!email) {
 			return res.status(400).json({
 				message: "Помилка. Код не існує"
@@ -110,7 +108,6 @@ router.post('/recovery-confirm', function (req, res) {
 		}
 
 		const user = User.getByEmail(email)
-
 		if (!user) {
 			return res.status(400).json({
 				message: "Помилка. Користувача з таким e-mail не існує"
@@ -119,7 +116,7 @@ router.post('/recovery-confirm', function (req, res) {
 
 		// Але залишати зміну пароля напряму - це дуже небезпечно, потім треба доробити функціонал
 		user.password = password
-		console.log(user)
+		// console.log(user)
 
 		const session = Session.create(user)
 
@@ -139,7 +136,7 @@ router.post('/recovery-confirm', function (req, res) {
 router.post('/register-confirm', function (req, res) {
 	const { code, token } = req.body
 
-	console.log(code, token)
+	// console.log(code, token)
 
 	if (!code || !token) {
 		return res.status(400).json({
@@ -157,7 +154,7 @@ router.post('/register-confirm', function (req, res) {
 		}
 
 		const email = Confirm.getData(code)
-		console.log("email from server:", email);
+		// console.log("email from server:", email);
 
 		if (!email) {
 			return res.status(400).json({
@@ -190,7 +187,7 @@ router.post('/register-confirm', function (req, res) {
 router.post('/login', function (req, res) {
 	const { email, password } = req.body
 
-	console.log(email, password)
+	// console.log(email, password)
 
 	if (!email || !password) {
 		return res.status(400).json({
@@ -200,7 +197,6 @@ router.post('/login', function (req, res) {
 
 	try {
 		const user = User.getByEmail(email)
-
 		if (!user) {
 			return res.status(400).json({
 				message: "Помилка. Користувач з таким e-mail не існує"

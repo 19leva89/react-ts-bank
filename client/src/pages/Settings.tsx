@@ -160,7 +160,7 @@ const SettingsPage: FC = () => {
         });
 
         const data = await res.json();
-        console.log("Data from server:", data);
+        // console.log("Data from server:", data);
 
         if (res.ok) {
           const token: string | null = authContext.authState.token;
@@ -237,7 +237,7 @@ const SettingsPage: FC = () => {
         </div>
       </form>
 
-      <Divider />
+      <Divider className="divider" />
 
       <form action="" method="" className="form__container" onSubmit={handleSubmitChangePassword}>
         <p className="form__text form__text--big">Change password</p>
@@ -277,7 +277,7 @@ const SettingsPage: FC = () => {
         </div>
       </form>
 
-      <Divider />
+      <Divider className="divider" />
 
       <form action="" method="" className="form__container" onSubmit={handleSubmitLogout}>
         <button className={"button button__warning button__slim"} type="submit">

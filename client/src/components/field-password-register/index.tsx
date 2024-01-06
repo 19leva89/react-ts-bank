@@ -52,7 +52,7 @@ export const FieldPasswordRegister: FC<FieldPasswordRegisterProps> = ({
             className={`field__input validation ${error ? "validation--active" : ""}`}
             name="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Пароль"
+            placeholder="password"
             onChange={handleInputPas}
           />
           <span className={`field__icon ${showPassword ? "show" : ""}`} onClick={toggleIcon} />
