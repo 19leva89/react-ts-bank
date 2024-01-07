@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useReducer, useState } from "react";
 import { AuthContext } from "../utils/authProvider";
 import { validateAmount } from "../utils/validators";
 import { getTokenSession } from "../script/session";
@@ -17,10 +17,13 @@ import ethereum from "./../img/payment/ethereum-ico.svg";
 import binance from "./../img/payment/binance-ico.svg";
 import { Divider } from "../components/divider";
 import { useNavigate } from "react-router-dom";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
+import { Alert } from "../components/load";
 
 const ReceivePage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const [isFormAmountValid, setIsFormAmountValid] = useState(false);
   const [amount, setAmount] = useState("");
 
@@ -47,56 +50,65 @@ const ReceivePage: FC = () => {
   const handleSubmitChangeAmount = async (paymentSystem: string) => {
     if (isFormAmountValid && authContext) {
       if (typeof amount !== "undefined" && Number(amount) > 0 && !isNaN(Number(amount))) {
-        // Логіка, якщо amount не є undefined і є числом більшим за 0
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
+        const userData = {
+          amount: Number(amount),
+          paymentSystem: paymentSystem,
+          status: "Receive",
+        };
+
+        try {
+          const token = getTokenSession(); // Отримання токену сесії
+          if (!token) {
+            dispatchRequest({
+              type: REQUEST_ACTION_TYPE.ERROR,
+              payload: "Session token not found",
+            });
+            return;
+          }
+
+          const res = await fetch("http://localhost:4000/user-receive", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+            body: JSON.stringify(userData),
+          });
+
+          const data = await res.json();
+          // console.log("Data from server:", data);
+
+          if (res.ok) {
+            dispatchRequest({
+              type: REQUEST_ACTION_TYPE.SUCCESS,
+              payload: data.message,
+            });
+
+            authContext.receive(Number(amount));
+
+            setTimeout(() => {
+              navigate("/balance");
+            }, 1000);
+          } else {
+            if (data && data.message) {
+              // Обробка повідомлення про помилку з сервера
+              dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
+            } else {
+              // Обробка загальної помилки від сервера
+              dispatchRequest({
+                type: REQUEST_ACTION_TYPE.ERROR,
+                payload: `Server error: ${res.statusText}`,
+              });
+            }
+          }
+        } catch (err) {
+          // Обробити помилку від fetch
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: `Fetch error: ${err}` });
+        }
       } else {
         console.error("Invalid amount");
-        return;
-      }
-
-      const userData = {
-        amount: Number(amount),
-        paymentSystem: paymentSystem,
-        status: "Receive",
-      };
-
-      try {
-        const token = getTokenSession(); // Отримання токену сесії
-
-        if (!token) {
-          console.error("Session token not found");
-          return;
-        }
-
-        const res = await fetch("http://localhost:4000/user-receive", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-          body: JSON.stringify(userData),
-        });
-
-        const data = await res.json();
-        // console.log("Data from server:", data);
-
-        if (res.ok) {
-          console.log("Balance successfully updated!");
-
-          authContext.receive(Number(amount));
-
-          navigate("/balance");
-        } else {
-          if (data && data.message) {
-            // Обробка повідомлення про помилку з сервера
-            console.error("Server error:", data.message);
-          } else {
-            // Обробка загальної помилки від сервера
-            console.error("Server error:", res.statusText);
-          }
-        }
-      } catch (err) {
-        // Обробити помилку від fetch
-        console.error("Fetch error:", err);
       }
     }
   };
@@ -176,9 +188,17 @@ const ReceivePage: FC = () => {
             </div>
           </button>
 
-          <div className="form__item form__item--slim">
-            <span className="alert alert--disabled">Увага, помилка!</span>
-          </div>
+          {requestState.status === REQUEST_ACTION_TYPE.SUCCESS && (
+            <section className="form__item form__item--slim form__alert">
+              <Alert status={requestState.status} message={requestState.message} />
+            </section>
+          )}
+
+          {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
+            <section className="form__item form__item--slim form__alert">
+              <Alert status={requestState.status} message={requestState.message} />
+            </section>
+          )}
         </form>
       </div>
     </main>

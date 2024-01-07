@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, SetStateAction, useContext } from "react";
+import { useState, useEffect, FC, SetStateAction, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
 import { validateEmail } from "../utils/validators";
@@ -6,10 +6,13 @@ import { saveSession } from "../script/session";
 
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
+import { Alert } from "../components/load";
 
 const RecoveryPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const [isFormValid, setIsFormValid] = useState(false);
   const [email, setEmail] = useState("");
 
@@ -42,6 +45,8 @@ const RecoveryPage: FC = () => {
       };
 
       try {
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
         const res = await fetch("http://localhost:4000/recovery", {
           method: "POST",
           headers: {
@@ -58,16 +63,24 @@ const RecoveryPage: FC = () => {
           navigate("/recovery-confirm");
         } else {
           if (data && data.message) {
-            // Обробка повідомлення про помилку з сервера
-            console.error("Server error:", data.message);
+            dispatchRequest({
+              type: REQUEST_ACTION_TYPE.ERROR,
+              payload: `Server error: ${data.message}`,
+            });
           } else {
             // Обробка загальної помилки від сервера
-            console.error("Server error:", res.statusText);
+            dispatchRequest({
+              type: REQUEST_ACTION_TYPE.ERROR,
+              payload: `Server error: ${res.statusText}`,
+            });
           }
         }
       } catch (err) {
         // Обробити помилку від fetch
-        console.error("Fetch error:", err);
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+        });
       }
     }
   };
@@ -101,9 +114,11 @@ const RecoveryPage: FC = () => {
           Send code
         </button>
 
-        <div className="form__item">
-          <span className="alert alert--disabled">Увага, помилка!</span>
-        </div>
+        {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
+          <section className="form__item form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
       </form>
     </main>
   );

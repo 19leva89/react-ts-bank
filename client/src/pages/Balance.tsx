@@ -10,6 +10,7 @@ import {
 import { format } from "date-fns";
 
 import { Button } from "../components/button";
+import { Alert, Skeleton } from "../components/load";
 import backgroundBalance from "./../img/background-balance.png";
 import settings from "./../img/settings.svg";
 import menuNotification from "./../img/notification-ico.svg";
@@ -17,7 +18,6 @@ import receive from "./../img/receive.svg";
 import send from "./../img/send.svg";
 import stripe from "./../img/payment/stripe.svg";
 import coinbase from "./../img/payment/coinbase.svg";
-import { Alert, Skeleton } from "../components/load";
 
 interface Transaction {
   id: number;
@@ -83,7 +83,7 @@ const BalancePage: FC = () => {
 
           dispatchRequest({
             type: REQUEST_ACTION_TYPE.SUCCESS,
-            payload: { list: data.transactions, isEmpty: data.transactions.length === 0 },
+            payload: "Что-то",
           });
 
           setTransactions(data.transactions);
@@ -93,10 +93,10 @@ const BalancePage: FC = () => {
             payload: "Failed to fetch transactions",
           });
         }
-      } catch (error) {
+      } catch (err) {
         dispatchRequest({
           type: REQUEST_ACTION_TYPE.ERROR,
-          payload: `Error fetching transactions: ${error}`,
+          payload: `Error fetching transactions: ${err}`,
         });
       }
     };
@@ -154,51 +154,54 @@ const BalancePage: FC = () => {
         </section>
       )}
 
-      {requestState.status === REQUEST_ACTION_TYPE.SUCCESS && (
+      {transactions.length > 0 && (
         <section className="wrapper__movement">
-          {transactions.reverse().map((transaction: Transaction) => (
-            <Link className="" to={`/transaction/${transaction.id}`} key={transaction.id}>
-              <div className="movement">
-                <div className="movement__content">
-                  <img
-                    className="movement__img"
-                    src={
-                      transaction.userImg
-                        ? transaction.userImg // якщо оплата через пошту
-                        : paymentSystemImages[transaction.paymentSystem] // якщо через Stripe або Coinbase
-                    }
-                    alt={transaction.paymentSystem}
-                  />
+          {transactions
+            .reverse()
+            .slice(0, 20)
+            .map((transaction: Transaction) => (
+              <Link className="" to={`/transaction/${transaction.id}`} key={transaction.id}>
+                <div className="movement">
+                  <div className="movement__content">
+                    <img
+                      className="movement__img"
+                      src={
+                        transaction.userImg
+                          ? transaction.userImg // якщо оплата через пошту
+                          : paymentSystemImages[transaction.paymentSystem] // якщо через Stripe або Coinbase
+                      }
+                      alt={transaction.paymentSystem}
+                    />
 
-                  <div className="movement__details">
-                    <div className="movement__name">{transaction.paymentSystem}</div>
-                    <div className="movement__specialty">
-                      <div className="movement__time">
-                        {format(new Date(transaction.date), "HH:mm")}
+                    <div className="movement__details">
+                      <div className="movement__name">{transaction.paymentSystem}</div>
+                      <div className="movement__specialty">
+                        <div className="movement__time">
+                          {format(new Date(transaction.date), "HH:mm")}
+                        </div>
+                        <div className="movement__status">{transaction.status}</div>
                       </div>
-                      <div className="movement__status">{transaction.status}</div>
                     </div>
                   </div>
-                </div>
 
-                <div
-                  className={`movement__cost ${
-                    transaction.status === "Receive"
-                      ? "movement__cost--plus"
-                      : "movement__cost--minus"
-                  }`}
-                >
-                  {transaction.status === "Receive"
-                    ? `+$${Math.abs(transaction.amount)
-                        .toFixed(2)
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
-                    : `-$${Math.abs(transaction.amount)
-                        .toFixed(2)
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                  <div
+                    className={`movement__cost ${
+                      transaction.status === "Receive"
+                        ? "movement__cost--plus"
+                        : "movement__cost--minus"
+                    }`}
+                  >
+                    {transaction.status === "Receive"
+                      ? `+$${Math.abs(transaction.amount)
+                          .toFixed(2)
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+                      : `-$${Math.abs(transaction.amount)
+                          .toFixed(2)
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
         </section>
       )}
     </main>

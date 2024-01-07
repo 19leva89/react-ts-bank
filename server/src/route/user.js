@@ -15,7 +15,7 @@ router.post('/user-new-email', function (req, res) {
 
 	if (!id || !newEmail || !password) {
 		return res.status(400).json({
-			message: "Помилка. Обов'язкові поля відсутні"
+			message: "Error. Required fields are missing"
 		})
 	}
 
@@ -24,31 +24,31 @@ router.post('/user-new-email', function (req, res) {
 
 		if (userToUpdate) {
 			return res.status(400).json({
-				message: "Помилка. Користувач з таким email вже існує"
+				message: "Error. A user with this email already exists"
 			})
 		}
 
 		const user = User.list.find(user => user.id === parseInt(id));
 		if (!user) {
 			return res.status(400).json({
-				message: "Помилка. Користувача не знайдено"
+				message: "Error. User not found"
 			});
 		}
 
 		const emailChanged = user.changeEmail(newEmail);
 		if (emailChanged) {
 			return res.status(200).json({
-				message: "Email успішно змінено",
+				message: "Email successfully changed",
 				user
 			});
 		} else {
 			return res.status(400).json({
-				message: "Помилка зміни email"
+				message: "Error changing email"
 			});
 		}
 	} catch (err) {
 		return res.status(400).json({
-			message: "Помилка зміни email"
+			message: "Error changing email"
 		})
 	}
 })
@@ -59,7 +59,7 @@ router.post('/user-new-password', function (req, res) {
 
 	if (!id || !password || !newPassword) {
 		return res.status(400).json({
-			message: "Помилка. Обов'язкові поля відсутні"
+			message: "Error. Required fields are missing"
 		})
 	}
 
@@ -67,24 +67,24 @@ router.post('/user-new-password', function (req, res) {
 		const user = User.list.find(user => user.id === parseInt(id));
 		if (!user) {
 			return res.status(400).json({
-				message: "Помилка. Користувача не знайдено"
+				message: "Error. User not found"
 			});
 		}
 
 		const passwordChanged = user.changePassword(password, newPassword);
 		if (passwordChanged) {
 			return res.status(200).json({
-				message: "Password успішно змінено",
+				message: "Password successfully changed",
 				user
 			});
 		} else {
 			return res.status(400).json({
-				message: "Помилка зміни password"
+				message: "Error changing password"
 			});
 		}
 	} catch (err) {
 		return res.status(400).json({
-			message: "Помилка зміни password"
+			message: "Error changing password"
 		})
 	}
 })
@@ -93,21 +93,21 @@ router.get('/user-notifications/', function (req, res) {
 	const token = req.headers.authorization;
 	if (!token) {
 		return res.status(401).json({
-			message: "Необхідна авторизація для отримання нотифікацій",
+			message: "Authorization is required to receive notifications",
 		});
 	}
 
 	const session = Session.get(token); // Знаходження сесії за токеном
 	if (!session) {
 		return res.status(401).json({
-			message: "Недійсний токен сесії, авторизація відхилена",
+			message: "Invalid session token, authorization denied",
 		});
 	}
 
 	const user = User.list.find(user => user.id === session.user.id);
 	if (!user) {
 		return res.status(404).json({
-			message: "Користувача не знайдено",
+			message: "User not found",
 		});
 	}
 
@@ -148,7 +148,6 @@ router.post('/user-notifications', function (req, res) {
 			notifications: user.notifications,
 		});
 	} catch (err) {
-		console.error("Error processing request:", err);
 		res.status(500).json({
 			message: "An error occurred while processing the request",
 		});
@@ -188,7 +187,7 @@ router.post('/user-receive', function (req, res) {
 		// console.log("Receive userTransaction:", userTransaction)
 
 		res.status(200).json({
-			message: "Баланс поповнено успішно",
+			message: "Balance successfully replenished",
 			transaction: userTransaction,
 		});
 	} catch (err) {
@@ -259,7 +258,7 @@ router.post('/user-send', function (req, res) {
 		recipient.notifications.push({ eventTitle, eventTime, eventType });
 
 		res.status(200).json({
-			message: "Balance replenished successfully",
+			message: "Balance successfully replenished",
 			transaction: senderTransaction,
 		});
 	} catch (err) {
@@ -274,28 +273,28 @@ router.get('/user-balance', function (req, res) {
 	const token = req.headers.authorization;
 	if (!token) {
 		return res.status(401).json({
-			message: "Необхідна авторизація для отримання нотифікацій",
+			message: "Authorization is required to receive notifications",
 		});
 	}
 
 	const session = Session.get(token); // Знаходження сесії за токеном
 	if (!session) {
 		return res.status(401).json({
-			message: "Недійсний токен сесії, авторизація відхилена",
+			message: "Invalid session token, authorization denied",
 		});
 	}
 
 	const user = User.list.find(user => user.id === session.user.id);
 	if (!user) {
 		return res.status(404).json({
-			message: "Користувача не знайдено",
+			message: "User not found",
 		});
 	}
 
 	const userBalance = user.getBalance();
 
 	res.status(200).json({
-		message: "Баланс завантажено",
+		message: "Balance loaded",
 		userBalance
 	});
 });
@@ -304,21 +303,21 @@ router.get('/user-transactions', function (req, res) {
 	const token = req.headers.authorization;
 	if (!token) {
 		return res.status(401).json({
-			message: "Необхідна авторизація для отримання нотифікацій",
+			message: "Authorization is required to receive notifications",
 		});
 	}
 
 	const session = Session.get(token); // Знаходження сесії за токеном
 	if (!session) {
 		return res.status(401).json({
-			message: "Недійсний токен сесії, авторизація відхилена",
+			message: "Invalid session token, authorization denied",
 		});
 	}
 
 	const user = User.list.find(user => user.id === session.user.id);
 	if (!user) {
 		return res.status(404).json({
-			message: "Користувача не знайдено",
+			message: "User not found",
 		});
 	}
 
@@ -326,7 +325,7 @@ router.get('/user-transactions', function (req, res) {
 	// console.log("server userTransactions:", userTransactions);
 
 	res.status(200).json({
-		message: "Транзакції завантажено",
+		message: "Transactions loaded",
 		transactions: userTransactions,
 	});
 });
@@ -337,12 +336,12 @@ router.get('/user-transaction/:transactionId', function (req, res) {
 	const transaction = Transaction.list.find(transaction => transaction.id === Number(transactionId));
 	if (!transaction) {
 		return res.status(404).json({
-			message: "Транзакцію не знайдено",
+			message: "Transaction not found",
 		});
 	}
 
 	res.status(200).json({
-		message: "Транзакція завантажена",
+		message: "Transaction loaded",
 		transaction: transaction,
 	});
 });

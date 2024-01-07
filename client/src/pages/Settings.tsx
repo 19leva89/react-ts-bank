@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../utils/authProvider";
@@ -9,9 +9,12 @@ import { Field } from "../components/field";
 import { FieldPasswordLogin } from "../components/field-password-login";
 import { FieldPasswordRenew } from "../components/field-password-renew";
 import { Divider } from "../components/divider";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
+import { Alert, Loader } from "../components/load";
 
 const SettingsPage: FC = () => {
   const authContext = useContext(AuthContext);
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
   const [isFormEmailValid, setIsFormEmailValid] = useState(false);
@@ -88,6 +91,8 @@ const SettingsPage: FC = () => {
       };
 
       try {
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
         const res = await fetch("http://localhost:4000/user-new-email", {
           method: "POST",
           headers: {
@@ -117,16 +122,16 @@ const SettingsPage: FC = () => {
           }
         } else {
           if (data && data.message) {
-            // Обробка повідомлення про помилку з сервера
-            console.error("Server error:", data.message);
+            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
           } else {
-            // Обробка загальної помилки від сервера
-            console.error("Server error:", res.statusText);
+            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
           }
         }
       } catch (err) {
-        // Обробити помилку від fetch
-        console.error("Fetch error:", err);
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+        });
       }
     }
   };
@@ -151,6 +156,8 @@ const SettingsPage: FC = () => {
       };
 
       try {
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
         const res = await fetch("http://localhost:4000/user-new-password", {
           method: "POST",
           headers: {
@@ -168,16 +175,16 @@ const SettingsPage: FC = () => {
           authContext.changePassword(updatedToken, data.user.password);
         } else {
           if (data && data.message) {
-            // Обробка повідомлення про помилку з сервера
-            console.error("Server error:", data.message);
+            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
           } else {
-            // Обробка загальної помилки від сервера
-            console.error("Server error:", res.statusText);
+            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
           }
         }
       } catch (err) {
-        // Обробити помилку від fetch
-        console.error("Fetch error:", err);
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+        });
       }
     }
   };
@@ -185,13 +192,26 @@ const SettingsPage: FC = () => {
   const handleSubmitLogout = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    logout();
-    localStorage.removeItem("sessionAuth");
-    navigate("/");
+    try {
+      dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
+      logout();
+      localStorage.removeItem("sessionAuth");
+
+      dispatchRequest({ type: REQUEST_ACTION_TYPE.RESET });
+
+      navigate("/");
+    } catch (err) {
+      dispatchRequest({
+        type: REQUEST_ACTION_TYPE.ERROR,
+        payload: `Logout error: ${err instanceof Error ? err.message : String(err)}`,
+      });
+    }
   };
 
   return (
     <main className="main__container">
+      {/* <Loader /> */}
       <div className="menu__container">
         <ButtonBack />
         <h1 className="form__title">Settings</h1>
@@ -231,10 +251,6 @@ const SettingsPage: FC = () => {
         >
           Save Email
         </button>
-
-        <div className="form__item form__item--slim">
-          <span className="alert alert--disabled">Увага, помилка!</span>
-        </div>
       </form>
 
       <Divider className="divider" />
@@ -271,10 +287,6 @@ const SettingsPage: FC = () => {
         >
           Save Password
         </button>
-
-        <div className="form__item form__item--slim">
-          <span className="alert alert--disabled">Увага, помилка!</span>
-        </div>
       </form>
 
       <Divider className="divider" />
@@ -284,9 +296,11 @@ const SettingsPage: FC = () => {
           Logout
         </button>
 
-        <div className="form__item form__item--slim">
-          <span className="alert alert--disabled">Увага, помилка!</span>
-        </div>
+        {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
+          <section className="form__item form__item--slim form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
       </form>
     </main>
   );

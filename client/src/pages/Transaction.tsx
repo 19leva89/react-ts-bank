@@ -1,11 +1,14 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
 
 import { ButtonBack } from "../components/button-back";
 import { Divider } from "../components/divider";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
+import { Alert, Loader } from "../components/load";
 
 const TransactionPage: FC = () => {
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const { transactionId } = useParams<{ transactionId: string }>();
   const [transaction, setTransaction] = useState<any>(null);
 
@@ -16,15 +19,23 @@ const TransactionPage: FC = () => {
   useEffect(() => {
     const fetchTransaction = async () => {
       try {
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
         const res = await fetch(`http://localhost:4000/user-transaction/${transactionId}`);
         if (res.ok) {
           const data = await res.json();
           setTransaction(data.transaction);
         } else {
-          console.error("Failed to fetch transaction");
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: "Failed to fetch transaction",
+          });
         }
-      } catch (error) {
-        console.error("Error fetching transaction:", error);
+      } catch (err) {
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: `Error fetching transaction: ${err}`,
+        });
       }
     };
 
@@ -32,7 +43,7 @@ const TransactionPage: FC = () => {
   }, [transactionId]);
 
   if (!transaction) {
-    return <div>Loading...</div>; // Чекаємо на завантаження
+    return <Loader />; // Чекаємо на завантаження
   }
 
   return (
@@ -80,9 +91,11 @@ const TransactionPage: FC = () => {
             </div>
           </div>
 
-          <div className="form__item form__item--slim">
-            <span className="alert alert--disabled">Увага, помилка!</span>
-          </div>
+          {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
+            <section className="form__item form__item--slim form__alert">
+              <Alert status={requestState.status} message={requestState.message} />
+            </section>
+          )}
         </form>
       </div>
     </main>

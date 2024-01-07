@@ -4,16 +4,6 @@ import background from "./../img/background.png";
 import backgroundSafe from "./../img/background-safe.png";
 
 const WelcomePage: FC = () => {
-  const handleRegisterClick = () => {
-    // Логіка для обробки кліку на кнопку Register
-    // console.log("Register button clicked");
-  };
-
-  const handleLoginClick = () => {
-    // Логіка для обробки кліку на кнопку Login
-    // console.log("Login button clicked");
-  };
-
   return (
     <main>
       <img className="background--img" src={background} alt="Background" />
@@ -25,11 +15,11 @@ const WelcomePage: FC = () => {
       </section>
 
       <div className="wrapper__button">
-        <Button className="button button__primary" link="/register" onClick={handleRegisterClick}>
+        <Button className="button button__primary" link="/register">
           <span className="button--name">Register</span>
         </Button>
 
-        <Button className="button button__transparent" link="/login" onClick={handleLoginClick}>
+        <Button className="button button__transparent" link="/login">
           <span className="button--name">Login</span>
         </Button>
       </div>

@@ -1,16 +1,23 @@
-import { FC, useState, useEffect, useContext } from "react";
+import { FC, useState, useEffect, useContext, useReducer } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { validateEmail } from "../utils/validators";
 import { AuthContext } from "../utils/authProvider";
 import { saveSession } from "../script/session";
+import {
+  requestReducer,
+  requestInitialState,
+  REQUEST_ACTION_TYPE,
+} from "./../utils/requestReducer";
 
 import { Field } from "../components/field";
 import { FieldPasswordLogin } from "../components/field-password-login";
 import { ButtonBack } from "../components/button-back";
+import { Alert, Loader } from "../components/load";
 
 const LoginPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const [isFormValid, setIsFormValid] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,6 +58,8 @@ const LoginPage: FC = () => {
       };
 
       try {
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
         const res = await fetch("http://localhost:4000/login", {
           method: "POST",
           headers: {
@@ -76,15 +85,23 @@ const LoginPage: FC = () => {
         } else {
           if (data && data.message) {
             // Обробка повідомлення про помилку з сервера
-            console.error("Server error:", data.message);
+            dispatchRequest({
+              type: REQUEST_ACTION_TYPE.ERROR,
+              payload: data.message,
+            });
           } else {
             // Обробка загальної помилки від сервера
-            console.error("Server error:", res.statusText);
+            dispatchRequest({
+              type: REQUEST_ACTION_TYPE.ERROR,
+              payload: `Server error: ${res.statusText}`,
+            });
           }
         }
       } catch (err) {
-        // Обробити помилку від fetch
-        console.error("Fetch error:", err);
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+        });
       }
     }
   };
@@ -136,9 +153,11 @@ const LoginPage: FC = () => {
           Continue
         </button>
 
-        <div className="form__item">
-          <span className="alert alert--disabled">Увага, помилка!</span>
-        </div>
+        {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
+          <section className="form__item form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
       </form>
     </main>
   );

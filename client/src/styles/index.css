@@ -249,6 +249,10 @@ body {
 	margin: 10px 0;
 }
 
+.form__alert {
+	margin: 0 20px;
+}
+
 .form__title {
 	margin: 12px;
 	color: #121212;

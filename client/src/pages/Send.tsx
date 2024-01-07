@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useContext } from "react";
+import { FC, useState, useEffect, useContext, useReducer } from "react";
 import { AuthContext } from "../utils/authProvider";
 import { validateEmail, validateAmount } from "../utils/validators";
 import { getTokenSession } from "../script/session";
@@ -6,10 +6,13 @@ import { getTokenSession } from "../script/session";
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
 import { useNavigate } from "react-router-dom";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
+import { Alert } from "../components/load";
 
 const SendPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const [isFormValid, setIsFormValid] = useState(false);
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState("");
@@ -64,10 +67,11 @@ const SendPage: FC = () => {
       // console.log("Send userData", userData);
 
       try {
-        const token = getTokenSession(); // Отримання токену сесії
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
+        const token = getTokenSession(); // Отримання токену сесії
         if (!token) {
-          console.error("Session token not found");
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: "Session token not found" });
           return;
         }
 
@@ -84,23 +88,29 @@ const SendPage: FC = () => {
         // console.log("Data from server:", data);
 
         if (res.ok) {
-          console.log("Balance successfully updated!");
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.SUCCESS,
+            payload: data.message,
+          });
+          // console.log("Balance successfully updated!");
 
           authContext.send(Number(amount));
 
-          navigate("/balance");
+          setTimeout(() => {
+            navigate("/balance");
+          }, 1000);
         } else {
           if (data && data.message) {
-            // Обробка повідомлення про помилку з сервера
-            console.error("Server error:", data.message);
+            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
           } else {
-            // Обробка загальної помилки від сервера
-            console.error("Server error:", res.statusText);
+            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
           }
         }
       } catch (err) {
-        // Обробити помилку від fetch
-        console.error("Fetch error:", err);
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+        });
       }
     }
   };
@@ -143,9 +153,17 @@ const SendPage: FC = () => {
           Send
         </button>
 
-        <div className="form__item">
-          <span className="alert alert--disabled">Увага, помилка!</span>
-        </div>
+        {requestState.status === REQUEST_ACTION_TYPE.SUCCESS && (
+          <section className="form__item form__item--slim form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
+
+        {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
+          <section className="form__item form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
       </form>
     </main>
   );

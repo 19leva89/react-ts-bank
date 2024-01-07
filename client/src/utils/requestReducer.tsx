@@ -10,22 +10,17 @@ export enum REQUEST_ACTION_TYPE {
 interface RequestState {
   status: REQUEST_ACTION_TYPE;
   message: string | null;
-  data: {
-    list: any[];
-    isEmpty: boolean;
-  } | null;
 }
 
 type RequestAction =
   | { type: REQUEST_ACTION_TYPE.PROGRESS }
-  | { type: REQUEST_ACTION_TYPE.SUCCESS; payload: RequestState["data"] }
+  | { type: REQUEST_ACTION_TYPE.SUCCESS; payload: string | null }
   | { type: REQUEST_ACTION_TYPE.ERROR; payload: string }
   | { type: REQUEST_ACTION_TYPE.RESET };
 
 export const requestInitialState: RequestState = {
   status: REQUEST_ACTION_TYPE.PROGRESS,
   message: null,
-  data: null,
 };
 
 export const requestReducer: Reducer<RequestState, RequestAction> = (
@@ -43,7 +38,7 @@ export const requestReducer: Reducer<RequestState, RequestAction> = (
       return {
         ...state,
         status: action.type,
-        data: action.payload,
+        message: action.payload,
       };
 
     case REQUEST_ACTION_TYPE.ERROR:

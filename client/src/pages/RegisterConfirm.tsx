@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useContext } from "react";
+import { FC, useState, useEffect, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { validateCode } from "../utils/validators";
 import { AuthContext } from "../utils/authProvider";
@@ -6,10 +6,13 @@ import { getTokenSession, saveSession } from "../script/session";
 
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
+import { Alert } from "../components/load";
 
 const RegisterConfirmPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const [isFormValid, setIsFormValid] = useState(false);
   const [code, setCode] = useState("");
 
@@ -45,6 +48,8 @@ const RegisterConfirmPage: FC = () => {
       // console.log("register-confirm userData:", userData);
 
       try {
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
         const res = await fetch("http://localhost:4000/register-confirm", {
           method: "POST",
           headers: {
@@ -56,6 +61,8 @@ const RegisterConfirmPage: FC = () => {
         // console.log("Data from server:", data);
 
         if (res.ok) {
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.SUCCESS, payload: data });
+
           saveSession(data.session);
 
           const { token, user } = data.session;
@@ -64,16 +71,16 @@ const RegisterConfirmPage: FC = () => {
           navigate("/balance");
         } else {
           if (data && data.message) {
-            // Обробка повідомлення про помилку з сервера
-            console.error("Server error:", data.message);
+            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
           } else {
-            // Обробка загальної помилки від сервера
-            console.error("Server error:", res.statusText);
+            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
           }
         }
       } catch (err) {
-        // Обробити помилку від fetch
-        console.error("Fetch error:", err);
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+        });
       }
     }
   };
@@ -107,9 +114,11 @@ const RegisterConfirmPage: FC = () => {
           Confirm
         </button>
 
-        <div className="form__item">
-          <span className="alert alert--disabled">Увага, помилка!</span>
-        </div>
+        {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
+          <section className="form__item form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
       </form>
     </main>
   );

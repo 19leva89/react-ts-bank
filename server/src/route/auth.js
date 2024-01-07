@@ -8,16 +8,16 @@ const { Confirm } = require('./../class/confirm')
 const { Session } = require('./../class/session')
 
 User.create({
-	email: '19leva89@gmail.com',
-	password: '22vFq1989',
+	email: 'test@gmail.com',
+	password: '123',
 })
 
 User.create({
 	email: 'mail@gmail.com',
-	password: '22vFq1989',
+	password: '123',
 })
 
-Confirm.create("19leva89@gmail.com")
+Confirm.create("test@gmail.com")
 Confirm.create("mail@gmail.com")
 
 // ================================================================
@@ -28,7 +28,7 @@ router.post('/register', function (req, res) {
 
 	if (!email || !password) {
 		return res.status(400).json({
-			message: "Помилка. Обов'язкові поля відсутні"
+			message: "Error. Required fields are missing"
 		})
 	}
 
@@ -36,7 +36,7 @@ router.post('/register', function (req, res) {
 		const user = User.getByEmail(email)
 		if (user) {
 			return res.status(400).json({
-				message: "Помилка. Такий користувач вже існує"
+				message: "Error. Such user already exists"
 			})
 		}
 
@@ -45,12 +45,12 @@ router.post('/register', function (req, res) {
 		Confirm.create(newUser.email)
 
 		return res.status(200).json({
-			message: "Користувач успішно зареєстрований",
+			message: "User successfully registered",
 			session
 		})
 	} catch (err) {
 		return res.status(400).json({
-			message: "Помилка створення користувача"
+			message: "Error creating user"
 		})
 	}
 })
@@ -62,7 +62,7 @@ router.post('/recovery', function (req, res) {
 
 	if (!email) {
 		return res.status(400).json({
-			message: "Помилка. Обов'язкові поля відсутні"
+			message: "Error. Required fields are missing"
 		})
 	}
 
@@ -71,14 +71,14 @@ router.post('/recovery', function (req, res) {
 
 		if (!user) {
 			return res.status(400).json({
-				message: "Помилка. Користувача з таким e-mail не існує"
+				message: "Error. User with this email does not exist"
 			})
 		}
 
 		Confirm.create(email)
 
 		return res.status(200).json({
-			message: "Код для відновлення паролю відправлено"
+			message: "The password reset code has been sent"
 		})
 
 	} catch (err) {
@@ -95,7 +95,7 @@ router.post('/recovery-confirm', function (req, res) {
 
 	if (!code || !password) {
 		return res.status(400).json({
-			message: "Помилка. Обов'язкові поля відсутні"
+			message: "Error. Required fields are missing"
 		})
 	}
 
@@ -103,14 +103,14 @@ router.post('/recovery-confirm', function (req, res) {
 		const email = Confirm.getData(Number(code))
 		if (!email) {
 			return res.status(400).json({
-				message: "Помилка. Код не існує"
+				message: "Error. Code does not exist"
 			})
 		}
 
 		const user = User.getByEmail(email)
 		if (!user) {
 			return res.status(400).json({
-				message: "Помилка. Користувача з таким e-mail не існує"
+				message: "Error. User with this email does not exist"
 			})
 		}
 
@@ -121,7 +121,7 @@ router.post('/recovery-confirm', function (req, res) {
 		const session = Session.create(user)
 
 		return res.status(200).json({
-			message: "Пароль змінено",
+			message: "Password changed",
 			session
 		})
 
@@ -140,7 +140,7 @@ router.post('/register-confirm', function (req, res) {
 
 	if (!code || !token) {
 		return res.status(400).json({
-			message: "Помилка. Обов'язкові поля відсутні"
+			message: "Error. Required fields are missing"
 		})
 	}
 
@@ -149,7 +149,7 @@ router.post('/register-confirm', function (req, res) {
 
 		if (!session) {
 			return res.status(400).json({
-				message: "Помилка. Ви не увійшли в акаунт"
+				message: "Error. You are not logged in"
 			})
 		}
 
@@ -158,13 +158,13 @@ router.post('/register-confirm', function (req, res) {
 
 		if (!email) {
 			return res.status(400).json({
-				message: "Помилка. Код не існує"
+				message: "Error. Code does not exist"
 			})
 		}
 
 		if (email !== session.user.email) {
 			return res.status(400).json({
-				message: "Помилка. Код не дійсний"
+				message: "Error. The code is invalid"
 			})
 		}
 
@@ -173,7 +173,7 @@ router.post('/register-confirm', function (req, res) {
 		session.user.isConfirm = true
 
 		return res.status(200).json({
-			message: "Ви підтвердили свою пошту",
+			message: "You have confirmed your email",
 			session
 		})
 
@@ -191,7 +191,7 @@ router.post('/login', function (req, res) {
 
 	if (!email || !password) {
 		return res.status(400).json({
-			message: "Помилка. Обов'язкові поля відсутні"
+			message: "Error. Required fields are missing"
 		})
 	}
 
@@ -199,20 +199,20 @@ router.post('/login', function (req, res) {
 		const user = User.getByEmail(email)
 		if (!user) {
 			return res.status(400).json({
-				message: "Помилка. Користувач з таким e-mail не існує"
+				message: "Error. User with this email does not exist"
 			})
 		}
 
 		if (user.password !== password) {
 			return res.status(400).json({
-				message: "Помилка. Пароль не підходить"
+				message: "Error. Incorrect passwor"
 			})
 		}
 
 		const session = Session.create(user)
 
 		return res.status(200).json({
-			message: "Ви увійшли",
+			message: "You have logged in",
 			session
 		})
 
