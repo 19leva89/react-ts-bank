@@ -424,32 +424,6 @@ body {
 	font-weight: 400;
 }
 
-.alert {
-	border: 1px solid transparent;
-	border-radius: 3px;
-	padding: 12px 16px;
-	font-size: 14px;
-}
-
-.alert--success {
-	border-color: #65cc3d;
-	color: #65cc3d;
-}
-
-.alert--error {
-	border-color: #f23152;
-	color: #f23152;
-}
-
-.alert--progress {
-	border-color: #2f80ed;
-	color: #2f80ed;
-}
-
-.alert--disabled {
-	display: none;
-}
-
 .validation {
 }
 

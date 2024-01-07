@@ -2,11 +2,11 @@ import { FC } from "react";
 import "./style.css";
 
 type AlertProps = {
-  message: string;
   status: string;
+  message: string | null;
 };
 
-export const Alert: FC<AlertProps> = ({ message, status = "default" }) => {
+export const Alert: FC<AlertProps> = ({ status = "disabled", message }) => {
   return <div className={`alert alert--${status}`}>{message}</div>;
 };
 

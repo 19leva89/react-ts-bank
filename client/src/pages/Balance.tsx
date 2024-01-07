@@ -1,7 +1,12 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
 import { getTokenSession } from "../script/session";
+import {
+  requestReducer,
+  requestInitialState,
+  REQUEST_ACTION_TYPE,
+} from "./../utils/requestReducer";
 import { format } from "date-fns";
 
 import { Button } from "../components/button";
@@ -12,6 +17,7 @@ import receive from "./../img/receive.svg";
 import send from "./../img/send.svg";
 import stripe from "./../img/payment/stripe.svg";
 import coinbase from "./../img/payment/coinbase.svg";
+import { Alert, Skeleton } from "../components/load";
 
 interface Transaction {
   id: number;
@@ -35,6 +41,7 @@ const paymentSystemImages: PaymentSystemImages = {
 const BalancePage: FC = () => {
   const authContext = useContext(AuthContext);
   const { authState, loadBalance } = authContext;
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const [userBalance, setUserBalance] = useState<number | null>(null);
   const [transactions, setTransactions] = useState([]);
   // console.log(transactions);
@@ -57,10 +64,11 @@ const BalancePage: FC = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const token = getTokenSession();
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
+        const token = getTokenSession();
         if (!token) {
-          console.error("Session token not found");
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: "Session token not found" });
           return;
         }
 
@@ -73,12 +81,23 @@ const BalancePage: FC = () => {
         if (res.ok) {
           const data = await res.json();
 
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.SUCCESS,
+            payload: { list: data.transactions, isEmpty: data.transactions.length === 0 },
+          });
+
           setTransactions(data.transactions);
         } else {
-          console.error("Failed to fetch transactions");
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: "Failed to fetch transactions",
+          });
         }
       } catch (error) {
-        console.error("Error fetching transactions:", error);
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: `Error fetching transactions: ${error}`,
+        });
       }
     };
 
@@ -123,7 +142,19 @@ const BalancePage: FC = () => {
         </div>
       </section>
 
-      {transactions.length > 0 && (
+      {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && (
+        <section className="wrapper__movement">
+          <Skeleton />
+        </section>
+      )}
+
+      {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
+        <section className="wrapper__movement">
+          <Alert status={requestState.status} message={requestState.message} />
+        </section>
+      )}
+
+      {requestState.status === REQUEST_ACTION_TYPE.SUCCESS && (
         <section className="wrapper__movement">
           {transactions.reverse().map((transaction: Transaction) => (
             <Link className="" to={`/transaction/${transaction.id}`} key={transaction.id}>
