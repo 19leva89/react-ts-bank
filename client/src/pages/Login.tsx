@@ -108,7 +108,7 @@ const LoginPage: FC = () => {
 
   return (
     <main className="main__container">
-      <Loader />
+      {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />}
 
       <ButtonBack />
 

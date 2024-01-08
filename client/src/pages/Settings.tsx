@@ -211,7 +211,8 @@ const SettingsPage: FC = () => {
 
   return (
     <main className="main__container">
-      {/* <Loader /> */}
+			{/* {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />} */}
+			
       <div className="menu__container">
         <ButtonBack />
         <h1 className="form__title">Settings</h1>
