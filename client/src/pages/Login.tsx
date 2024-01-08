@@ -108,6 +108,8 @@ const LoginPage: FC = () => {
 
   return (
     <main className="main__container">
+      <Loader />
+
       <ButtonBack />
 
       <form action="" method="" className="form__container" onSubmit={handleSubmit}>
