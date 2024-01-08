@@ -1,6 +1,5 @@
-import { FC, useContext, useEffect, useReducer, useState } from "react";
+import { FC, useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../utils/authProvider";
 import { getTokenSession } from "../script/session";
 import {
   requestReducer,
@@ -10,7 +9,7 @@ import {
 import { format } from "date-fns";
 
 import { Button } from "../components/button";
-import { Alert, Skeleton } from "../components/load";
+import { Alert, Loader, Skeleton } from "../components/load";
 import backgroundBalance from "./../img/background-balance.png";
 import settings from "./../img/settings.svg";
 import menuNotification from "./../img/notification-ico.svg";
@@ -18,6 +17,7 @@ import receive from "./../img/receive.svg";
 import send from "./../img/send.svg";
 import stripe from "./../img/payment/stripe.svg";
 import coinbase from "./../img/payment/coinbase.svg";
+import { AUTH_ACTION_TYPE, authInitialState, authReducer } from "../utils/authReducer";
 
 interface Transaction {
   id: number;
@@ -39,14 +39,73 @@ const paymentSystemImages: PaymentSystemImages = {
 };
 
 const BalancePage: FC = () => {
-  const authContext = useContext(AuthContext);
-  const { authState, loadBalance } = authContext;
+  const [authState, dispatchAuth] = useReducer(authReducer, authInitialState);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const [userBalance, setUserBalance] = useState<number | null>(null);
   const [transactions, setTransactions] = useState([]);
   // console.log(transactions);
 
   useEffect(() => {
+    const loadBalance = async () => {
+      try {
+        const token = getTokenSession();
+        if (!token) {
+          console.error("Session token not found");
+          return;
+        }
+
+        const res = await fetch("http://localhost:4000/user-balance", {
+          headers: {
+            Authorization: token,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+
+          if (data && data.userBalance !== undefined) {
+            dispatchRequest({
+              type: REQUEST_ACTION_TYPE.SUCCESS,
+              payload: "Success load",
+            });
+
+            dispatchAuth({
+              type: AUTH_ACTION_TYPE.RECEIVE,
+              payload: { balance: data.userBalance },
+            });
+          } else {
+            dispatchRequest({
+              type: REQUEST_ACTION_TYPE.ERROR,
+              payload: "Invalid balance data received",
+            });
+          }
+        } else if (res.status === 401) {
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: "Invalid token or unauthorized access",
+          });
+          return;
+        } else if (res.status === 404) {
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: "User not found",
+          });
+          return;
+        } else {
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: "Failed to fetch balance",
+          });
+        }
+      } catch (err) {
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: `Error fetching balance: ${err}`,
+        });
+        return;
+      }
+    };
+
     loadBalance();
   }, []);
 
@@ -83,7 +142,7 @@ const BalancePage: FC = () => {
 
           dispatchRequest({
             type: REQUEST_ACTION_TYPE.SUCCESS,
-            payload: "Что-то",
+            payload: "Success load",
           });
 
           setTransactions(data.transactions);
@@ -106,6 +165,8 @@ const BalancePage: FC = () => {
 
   return (
     <main>
+      {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />}
+
       <img className="background-balance--img" src={backgroundBalance} alt="background balance" />
 
       <section className="wrapper__menu">
@@ -122,7 +183,7 @@ const BalancePage: FC = () => {
 
       <section className="wrapper__balance">
         <h1 className="balance__title">
-          {userBalance !== null ? `$ ${Math.abs(userBalance).toFixed(2)}` : "Завантаження..."}
+          {userBalance !== null ? `$ ${Math.abs(userBalance).toFixed(2)}` : "..."}
         </h1>
       </section>
 

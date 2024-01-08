@@ -8,19 +8,58 @@ const { Confirm } = require('./../class/confirm')
 const { Session } = require('./../class/session')
 
 User.create({
-	email: 'test@gmail.com',
-	password: '123',
+	email: '19leva89@gmail.com',
+	password: '22vFq1989',
 })
 
 User.create({
 	email: 'mail@gmail.com',
-	password: '123',
+	password: '22vFq1989',
 })
 
-Confirm.create("test@gmail.com")
+Confirm.create("19leva89@gmail.com")
 Confirm.create("mail@gmail.com")
 
 // ================================================================
+
+router.post('/login', function (req, res) {
+	const { email, password } = req.body
+
+	// console.log(email, password)
+
+	if (!email || !password) {
+		return res.status(400).json({
+			message: "Error. Required fields are missing"
+		})
+	}
+
+	try {
+		const user = User.getByEmail(email)
+		if (!user) {
+			return res.status(400).json({
+				message: "Error. User with this email does not exist"
+			})
+		}
+
+		if (user.password !== password) {
+			return res.status(400).json({
+				message: "Error. Incorrect passwor"
+			})
+		}
+
+		const session = Session.create(user)
+
+		return res.status(200).json({
+			message: "You have logged in",
+			session
+		})
+
+	} catch (err) {
+		return res.status(400).json({
+			message: err.message
+		})
+	}
+})
 
 router.post('/register', function (req, res) {
 	const { email, password } = req.body
@@ -51,6 +90,57 @@ router.post('/register', function (req, res) {
 	} catch (err) {
 		return res.status(400).json({
 			message: "Error creating user"
+		})
+	}
+})
+
+router.post('/register-confirm', function (req, res) {
+	const { code, token } = req.body
+
+	// console.log(code, token)
+
+	if (!code || !token) {
+		return res.status(400).json({
+			message: "Error. Required fields are missing"
+		})
+	}
+
+	try {
+		const session = Session.get(token)
+
+		if (!session) {
+			return res.status(400).json({
+				message: "Error. You are not logged in"
+			})
+		}
+
+		const email = Confirm.getData(code)
+		// console.log("email from server:", email);
+
+		if (!email) {
+			return res.status(400).json({
+				message: "Error. Code does not exist"
+			})
+		}
+
+		if (email !== session.user.email) {
+			return res.status(400).json({
+				message: "Error. The code is invalid"
+			})
+		}
+
+		const user = User.getByEmail(session.user.email)
+		user.isConfirm = true
+		session.user.isConfirm = true
+
+		return res.status(200).json({
+			message: "You have confirmed your email",
+			session
+		})
+
+	} catch (err) {
+		return res.status(400).json({
+			message: err.message
 		})
 	}
 })
@@ -133,95 +223,6 @@ router.post('/recovery-confirm', function (req, res) {
 
 })
 
-router.post('/register-confirm', function (req, res) {
-	const { code, token } = req.body
-
-	// console.log(code, token)
-
-	if (!code || !token) {
-		return res.status(400).json({
-			message: "Error. Required fields are missing"
-		})
-	}
-
-	try {
-		const session = Session.get(token)
-
-		if (!session) {
-			return res.status(400).json({
-				message: "Error. You are not logged in"
-			})
-		}
-
-		const email = Confirm.getData(code)
-		// console.log("email from server:", email);
-
-		if (!email) {
-			return res.status(400).json({
-				message: "Error. Code does not exist"
-			})
-		}
-
-		if (email !== session.user.email) {
-			return res.status(400).json({
-				message: "Error. The code is invalid"
-			})
-		}
-
-		const user = User.getByEmail(session.user.email)
-		user.isConfirm = true
-		session.user.isConfirm = true
-
-		return res.status(200).json({
-			message: "You have confirmed your email",
-			session
-		})
-
-	} catch (err) {
-		return res.status(400).json({
-			message: err.message
-		})
-	}
-})
-
-router.post('/login', function (req, res) {
-	const { email, password } = req.body
-
-	// console.log(email, password)
-
-	if (!email || !password) {
-		return res.status(400).json({
-			message: "Error. Required fields are missing"
-		})
-	}
-
-	try {
-		const user = User.getByEmail(email)
-		if (!user) {
-			return res.status(400).json({
-				message: "Error. User with this email does not exist"
-			})
-		}
-
-		if (user.password !== password) {
-			return res.status(400).json({
-				message: "Error. Incorrect passwor"
-			})
-		}
-
-		const session = Session.create(user)
-
-		return res.status(200).json({
-			message: "You have logged in",
-			session
-		})
-
-	} catch (err) {
-		return res.status(400).json({
-			message: err.message
-		})
-	}
-})
-
 // Підключаємо роутер до бек-енду
 module.exports = router
+

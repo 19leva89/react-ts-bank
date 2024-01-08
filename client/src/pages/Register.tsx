@@ -5,10 +5,10 @@ import { validateEmail, validatePassword } from "../utils/validators";
 import { saveSession } from "../script/session";
 
 import { Field } from "../components/field";
-import { FieldPasswordRegister } from "../components/field-password-register";
+import { FieldPassword } from "../components/field-password";
 import { ButtonBack } from "../components/button-back";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
-import { Alert } from "../components/load";
+import { Alert, Loader } from "../components/load";
 
 const RegisterPage: FC = () => {
   const navigate = useNavigate();
@@ -96,6 +96,8 @@ const RegisterPage: FC = () => {
 
   return (
     <main className="main__container">
+      {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />}
+
       <ButtonBack />
 
       <form action="" method="" className="form__container" onSubmit={handleSubmit}>
@@ -115,7 +117,12 @@ const RegisterPage: FC = () => {
           </div>
 
           <div className="form__item">
-            <FieldPasswordRegister label="Password" onPassChangeReg={handleInput} />
+            <FieldPassword
+              label="Password"
+              name="password"
+              placeholder="password"
+              onPasswordChange={handleInput}
+            />
           </div>
         </div>
 

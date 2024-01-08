@@ -43,7 +43,7 @@ const TransactionPage: FC = () => {
   }, [transactionId]);
 
   if (!transaction) {
-    return <Loader />; // Чекаємо на завантаження
+    return <Loader />;
   }
 
   return (

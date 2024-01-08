@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { validateCode } from "../utils/validators";
 import { AuthContext } from "../utils/authProvider";
 import { getTokenSession, saveSession } from "../script/session";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
-import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
-import { Alert } from "../components/load";
+import { Alert, Loader } from "../components/load";
 
 const RegisterConfirmPage: FC = () => {
   const navigate = useNavigate();
@@ -16,22 +16,17 @@ const RegisterConfirmPage: FC = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [code, setCode] = useState("");
 
-  useEffect(() => {
-    const isPasswordValid = code.trim() !== "";
-
-    setIsFormValid(isPasswordValid);
-  }, [code]);
-
-  // console.log("code:", code);
+  console.log(code);
 
   const handleInput = (name: string, value: string | boolean) => {
     if (name === "code") {
-      const isValidCode = validateCode(value as string);
+      const updatedCode = (value as string).trim();
 
-      if (isValidCode) {
-        setCode(value as string);
+      if (validateCode(updatedCode)) {
+        setCode(updatedCode);
+        setIsFormValid(updatedCode.length === 4);
       } else {
-        setCode("");
+        setIsFormValid(false);
       }
     }
   };
@@ -87,6 +82,8 @@ const RegisterConfirmPage: FC = () => {
 
   return (
     <main className="main__container">
+      {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />}
+
       <ButtonBack />
 
       <form action="/check" method="post" className="form__container" onSubmit={handleSubmit}>

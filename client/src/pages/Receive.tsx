@@ -18,7 +18,7 @@ import binance from "./../img/payment/binance-ico.svg";
 import { Divider } from "../components/divider";
 import { useNavigate } from "react-router-dom";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
-import { Alert } from "../components/load";
+import { Alert, Loader } from "../components/load";
 
 const ReceivePage: FC = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const ReceivePage: FC = () => {
 
   // console.log("amount:", amount);
 
-  const handleInputChangeAmount = (name: string, value: string) => {
+  const handleInput = (name: string, value: string) => {
     if (name === "amount") {
       const isValidAmount = validateAmount(value as string);
 
@@ -47,11 +47,9 @@ const ReceivePage: FC = () => {
     }
   };
 
-  const handleSubmitChangeAmount = async (paymentSystem: string) => {
+  const handleSubmit = async (paymentSystem: string) => {
     if (isFormAmountValid && authContext) {
       if (typeof amount !== "undefined" && Number(amount) > 0 && !isNaN(Number(amount))) {
-        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
-
         const userData = {
           amount: Number(amount),
           paymentSystem: paymentSystem,
@@ -59,6 +57,8 @@ const ReceivePage: FC = () => {
         };
 
         try {
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
           const token = getTokenSession(); // Отримання токену сесії
           if (!token) {
             dispatchRequest({
@@ -116,6 +116,8 @@ const ReceivePage: FC = () => {
   return (
     <main className="main__container main__container--gray">
       <div className="menu__container">
+        {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />}
+
         <ButtonBack />
         <h1 className="form__title">Receive</h1>
         <div className="stub"></div>
@@ -126,12 +128,7 @@ const ReceivePage: FC = () => {
           <div className="form form--slim">
             <p className="form__text form__text--big form__text--left">Receive amount</p>
             <div className="form__item form__item--slim">
-              <Field
-                type="number"
-                name="amount"
-                placeholder="$"
-                onAmountChange={handleInputChangeAmount}
-              />
+              <Field type="number" name="amount" placeholder="$" onAmountChange={handleInput} />
             </div>
           </div>
 
@@ -144,7 +141,7 @@ const ReceivePage: FC = () => {
             }`}
             type="button"
             disabled={!isFormAmountValid}
-            onClick={() => handleSubmitChangeAmount("Stripe")}
+            onClick={() => handleSubmit("Stripe")}
           >
             <div className="payment__container">
               <div className="payment__wrapper">
@@ -169,7 +166,7 @@ const ReceivePage: FC = () => {
             }`}
             type="button"
             disabled={!isFormAmountValid}
-            onClick={() => handleSubmitChangeAmount("Coinbase")}
+            onClick={() => handleSubmit("Coinbase")}
           >
             <div className="payment__container">
               <div className="payment__wrapper">

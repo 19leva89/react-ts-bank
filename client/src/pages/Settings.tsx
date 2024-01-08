@@ -2,14 +2,13 @@ import { FC, useContext, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../utils/authProvider";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { validateEmail, validatePassword } from "../utils/validators";
 
 import { ButtonBack } from "../components/button-back";
 import { Field } from "../components/field";
-import { FieldPasswordLogin } from "../components/field-password-login";
-import { FieldPasswordRenew } from "../components/field-password-renew";
+import { FieldPassword } from "../components/field-password";
 import { Divider } from "../components/divider";
-import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { Alert, Loader } from "../components/load";
 
 const SettingsPage: FC = () => {
@@ -211,8 +210,8 @@ const SettingsPage: FC = () => {
 
   return (
     <main className="main__container">
-			{/* {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />} */}
-			
+      {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />}
+
       <div className="menu__container">
         <ButtonBack />
         <h1 className="form__title">Settings</h1>
@@ -234,11 +233,11 @@ const SettingsPage: FC = () => {
           </div>
 
           <div className="form__item form__item--slim">
-            <FieldPasswordLogin
+            <FieldPassword
               label="Password"
               name="password"
               placeholder="Password"
-              onPasswordChangeLog={handleInputChangeEmail}
+              onPasswordChange={handleInputChangeEmail}
             />
           </div>
         </div>
@@ -261,20 +260,20 @@ const SettingsPage: FC = () => {
 
         <div className="form form--slim">
           <div className="form__item form__item--slim">
-            <FieldPasswordLogin
+            <FieldPassword
               label="Old password"
               name="password"
               placeholder="Password"
-              onPasswordChangeLog={handleInputChangePassword}
+              onPasswordChange={handleInputChangePassword}
             />
           </div>
 
           <div className="form__item form__item--slim">
-            <FieldPasswordRenew
+            <FieldPassword
               label="New password"
               name="newPassword"
               placeholder="Password"
-              onPasswordNewChangeLog={handleInputChangePassword}
+              onPasswordChange={handleInputChangePassword}
             />
           </div>
         </div>

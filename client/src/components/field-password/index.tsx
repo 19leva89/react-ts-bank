@@ -1,19 +1,19 @@
 import { FC, Fragment, useState, ChangeEvent } from "react";
-import "./style.css";
 import { validatePassword } from "../../utils/validators";
+import "./style.css";
 
-type FieldPasswordLoginProps = {
+type FieldPasswordProps = {
   name: string;
   placeholder: string;
   label: string;
-  onPasswordChangeLog: (name: string, value: string) => void;
+  onPasswordChange: (name: string, value: string) => void;
 };
 
-export const FieldPasswordLogin: FC<FieldPasswordLoginProps> = ({
+export const FieldPassword: FC<FieldPasswordProps> = ({
   name,
   placeholder,
   label,
-  onPasswordChangeLog,
+  onPasswordChange,
 }) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +23,7 @@ export const FieldPasswordLogin: FC<FieldPasswordLoginProps> = ({
     setShowPassword((prevState) => !prevState);
   };
 
-  const handleInputPas = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     // console.log(`Поле ${name} було змінено на ${value}`);
 
@@ -38,7 +38,7 @@ export const FieldPasswordLogin: FC<FieldPasswordLoginProps> = ({
       setError("");
     }
 
-    onPasswordChangeLog(name, value);
+    onPasswordChange(name, value);
   };
 
   return (
@@ -57,7 +57,7 @@ export const FieldPasswordLogin: FC<FieldPasswordLoginProps> = ({
             name={name}
             type={showPassword ? "text" : "password"}
             placeholder={placeholder}
-            onChange={handleInputPas}
+            onChange={handleInput}
           />
           <span className={`field__icon ${showPassword ? "show" : ""}`} onClick={toggleIcon} />
         </div>

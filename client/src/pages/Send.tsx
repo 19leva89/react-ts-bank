@@ -7,7 +7,7 @@ import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
 import { useNavigate } from "react-router-dom";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
-import { Alert } from "../components/load";
+import { Alert, Loader } from "../components/load";
 
 const SendPage: FC = () => {
   const navigate = useNavigate();
@@ -117,6 +117,8 @@ const SendPage: FC = () => {
 
   return (
     <main className="main__container">
+      {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />}
+
       <ButtonBack />
 
       <form action="" method="" className="form__container">

@@ -19,7 +19,7 @@ type RequestAction =
   | { type: REQUEST_ACTION_TYPE.RESET };
 
 export const requestInitialState: RequestState = {
-  status: REQUEST_ACTION_TYPE.PROGRESS,
+  status: REQUEST_ACTION_TYPE.RESET,
   message: null,
 };
 

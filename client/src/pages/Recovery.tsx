@@ -7,7 +7,7 @@ import { saveSession } from "../script/session";
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
-import { Alert } from "../components/load";
+import { Alert, Loader } from "../components/load";
 
 const RecoveryPage: FC = () => {
   const navigate = useNavigate();
@@ -87,6 +87,8 @@ const RecoveryPage: FC = () => {
 
   return (
     <main className="main__container">
+      {requestState.status === REQUEST_ACTION_TYPE.PROGRESS && <Loader />}
+
       <ButtonBack />
 
       <form action="" method="" className="form__container" onSubmit={handleSubmit}>
