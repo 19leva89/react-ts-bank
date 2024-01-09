@@ -1,5 +1,6 @@
 import { FC, Fragment, useState, ChangeEvent } from "react";
-import { validatePassword } from "../../utils/validators";
+import useForm from "../../script/form";
+
 import "./style.css";
 
 type FieldPasswordProps = {
@@ -9,15 +10,20 @@ type FieldPasswordProps = {
   onPasswordChange: (name: string, value: string) => void;
 };
 
-export const FieldPassword: FC<FieldPasswordProps> = ({
-  name,
-  placeholder,
-  label,
-  onPasswordChange,
-}) => {
-  const [password, setPassword] = useState("");
+export const FieldPassword: FC<FieldPasswordProps> = ({ name, placeholder, label }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const {
+    fields,
+    errors,
+    setError,
+    disabled,
+    change,
+    validate,
+    validateAll,
+    alertStatus,
+    alertText,
+    setAlert,
+  } = useForm();
 
   const toggleIcon = () => {
     setShowPassword((prevState) => !prevState);
@@ -27,18 +33,10 @@ export const FieldPassword: FC<FieldPasswordProps> = ({
     const { name, value } = e.target;
     // console.log(`Поле ${name} було змінено на ${value}`);
 
-    setPassword(value.toString());
+    const error = validate(name, value);
+    setError(name, error || "");
 
-    const isValidPassword = validatePassword(value); // Перевірка на валідний пароль
-    if (!isValidPassword) {
-      setError(
-        "Пароль повинен бути мінімум 8 символів у довжину і містити малі та великі латинські літери, а також цифри"
-      );
-    } else {
-      setError("");
-    }
-
-    onPasswordChange(name, value);
+    change(name, value);
   };
 
   return (
@@ -46,14 +44,14 @@ export const FieldPassword: FC<FieldPasswordProps> = ({
       <div className="field field--password">
         <label
           htmlFor="password"
-          className={`field__label field__error ${error ? "field__error--active" : ""}`}
+          className={`field__label field__error ${errors[name] ? "field__error--active" : ""}`}
         >
           {label}
         </label>
 
         <div className="field__wrapper">
           <input
-            className={`field__input validation ${error ? "validation--active" : ""}`}
+            className={`field__input validation ${errors[name] ? "validation--active" : ""}`}
             name={name}
             type={showPassword ? "text" : "password"}
             placeholder={placeholder}
@@ -63,8 +61,11 @@ export const FieldPassword: FC<FieldPasswordProps> = ({
         </div>
       </div>
 
-      <span className={`form__error ${error ? "form__error--active" : ""}`} data-name="password">
-        {error}
+      <span
+        className={`form__error ${errors[name] ? "form__error--active" : ""}`}
+        data-name="password"
+      >
+        {errors[name]}
       </span>
     </Fragment>
   );

@@ -1,98 +1,68 @@
-import { FC, useState, useEffect, useContext, useReducer } from "react";
+import { FC, useReducer } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { AuthContext } from "../utils/authProvider";
-import { validateEmail, validatePassword } from "../utils/validators";
+
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { saveSession } from "../script/session";
+import useForm from "./../script/form";
 
 import { Field } from "../components/field";
 import { FieldPassword } from "../components/field-password";
 import { ButtonBack } from "../components/button-back";
-import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { Alert, Loader } from "../components/load";
 
 const RegisterPage: FC = () => {
   const navigate = useNavigate();
-  const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
+    useForm();
 
-  useEffect(() => {
-    const isEmailValid = email.trim() !== "";
-    const isPasswordValid = password.trim() !== "";
-
-    setIsFormValid(isEmailValid && isPasswordValid);
-  }, [email, password]);
-
-  // console.log("email:", email);
-  // console.log("password:", password);
-
-  const handleInput = (name: string, value: string | boolean) => {
-    if (name === "email") {
-      const isValidEmail = validateEmail(value as string);
-
-      if (isValidEmail) {
-        setEmail(value as string);
-      } else {
-        setEmail("");
-      }
-    }
-
-    if (name === "password") {
-      const isValidPassword = validatePassword(value as string);
-
-      if (isValidPassword) {
-        setPassword(value as string);
-      } else {
-        setPassword("");
-      }
-    }
+  const handleInput = (name: string, value: string) => {
+    change(name, value);
   };
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    validateAll();
 
-    if (isFormValid && authContext) {
-      const userData = {
-        email: email,
-        password: password,
-      };
+    const userData = {
+      email: fields["email"],
+      password: fields["password"],
+    };
+    console.log("register userData:", userData);
 
-      try {
-        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+    try {
+      dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-        const res = await fetch("http://localhost:4000/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        });
+      const res = await fetch("http://localhost:4000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
-        const data = await res.json();
-        // console.log("Data from server:", data);
+      const data = await res.json();
+      // console.log("Data from server:", data);
 
-        if (res.ok) {
-					dispatchRequest({ type: REQUEST_ACTION_TYPE.SUCCESS, payload: data.message });
-					
-					saveSession(data.session);
-					
-          navigate("/register-confirm");
+      if (res.ok) {
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.SUCCESS, payload: data.message });
+
+        saveSession(data.session);
+
+        navigate("/register-confirm");
+      } else {
+        if (data && data.message) {
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
         } else {
-          if (data && data.message) {
-            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
-          } else {
-            // Обробка загальної помилки від сервера
-            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
-          }
+          // Обробка загальної помилки від сервера
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
         }
-      } catch (err) {
-        dispatchRequest({
-          type: REQUEST_ACTION_TYPE.ERROR,
-          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
-        });
       }
+    } catch (err) {
+      dispatchRequest({
+        type: REQUEST_ACTION_TYPE.ERROR,
+        payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+      });
     }
   };
 
@@ -138,9 +108,9 @@ const RegisterPage: FC = () => {
         </div>
 
         <button
-          className={`button button__primary ${isFormValid ? "" : "button--disabled"}`}
+          className={`button button__primary ${disabled ? "button--disabled" : ""}`}
           type="submit"
-          disabled={!isFormValid}
+          disabled={disabled}
         >
           Continue
         </button>

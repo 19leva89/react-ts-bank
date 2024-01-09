@@ -1,108 +1,101 @@
-export const REG_EXP_EMAIL = new RegExp(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/);
-export const REG_EXP_PASSWORD = new RegExp(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$/);
+import { useState } from "react";
 
-interface FieldError {
-  [key: string]: string | null;
-}
+export const REG_EXP_EMAIL = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+export const REG_EXP_PASSWORD = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
-interface FieldValue {
+interface Fields {
   [key: string]: any;
 }
 
-export class Form {
-  FIELD_NAME: Record<string, string> = {};
-  FIELD_ERROR: FieldError = {};
-  value: FieldValue = {};
-  error: FieldError = {};
-  disabled = true;
+interface Errors {
+  [key: string]: string | null;
+}
 
-  change = (name: string, value: any): void => {
-    const error = this.validate(name, value);
-    this.value[name] = value;
+const useForm = () => {
+  const [fields, setFields] = useState<Fields>({});
+  const [errors, setErrors] = useState<Errors>({});
+  const [disabled, setDisabled] = useState<boolean>(true);
+  const [alertStatus, setAlertStatus] = useState<string>("");
+  const [alertText, setAlertText] = useState<string>("");
+
+  const change = (name: string, value: any) => {
+    const error = validate(name, value);
+    setFields({ ...fields, [name]: value });
 
     if (error) {
-      this.setError(name, error);
+      setErrors({ ...errors, [name]: error });
     } else {
-      this.setError(name, null);
-      delete this.error[name];
+      const updatedErrors = { ...errors };
+      delete updatedErrors[name];
+      setErrors(updatedErrors);
     }
 
-    this.checkDisabled();
+    checkDisabled();
   };
 
-  setError = (name: string, error: string | null): void => {
-    const span = document.querySelector(`.form__error[name="${name}"]`);
-    const field = document.querySelector(`.validation[name="${name}"]`) as HTMLElement | null;
-
-    if (span) {
-      span.classList.toggle("form__error--active", Boolean(error));
-      span.textContent = error || "";
-    }
-
-    if (field) {
-      field.classList.toggle("validation--active", Boolean(error));
-    }
+  const setError = (name: string, error: string | null) => {
+    setErrors({ ...errors, [name]: error });
   };
 
-  checkDisabled = (): void => {
-    let disabled = false;
+  const checkDisabled = () => {
+    let isDisabled = false;
 
-    Object.values(this.FIELD_NAME).forEach((name) => {
-      if (this.error[name] || this.value[name] === undefined) {
-        disabled = true;
+    Object.keys(fields).forEach((name) => {
+      if (errors[name] !== null || fields[name] === undefined) {
+        isDisabled = true;
       }
     });
 
-    const el = document.querySelector(".button");
-
-    if (el) {
-      el.classList.toggle("button--disabled", Boolean(disabled));
-    }
-
-    this.disabled = disabled;
+    setDisabled(isDisabled);
   };
 
-  validateAll = (): void => {
-    Object.values(this.FIELD_NAME).forEach((name) => {
-      const error = this.validate(name, this.value[name]);
-
-      if (error) {
-        this.setError(name, error);
-      }
-    });
-  };
-
-  validate = (name: string, value: any): string | null => {
-    // Add your validation logic here
-    // Example:
+  const validate = (name: string, value: any) => {
     if (name === "email" && !REG_EXP_EMAIL.test(value)) {
-      return "Invalid email format";
+      return "NEW Введіть коректне значення e-mail адреси";
+    }
+
+    if (name === "newEmail" && !REG_EXP_EMAIL.test(value)) {
+      return "NEW Введіть коректне значення e-mail адреси";
     }
 
     if (name === "password" && !REG_EXP_PASSWORD.test(value)) {
-      return "Password must contain at least one uppercase letter, one lowercase letter, one digit, and be at least 8 characters long";
+      return "NEW Пароль повинен бути мінімум 8 символів у довжину і містити малі та великі латинські літери, а також цифри";
+    }
+
+    if (name === "newPassword" && !REG_EXP_PASSWORD.test(value)) {
+      return "NEW Пароль повинен бути мінімум 8 символів у довжину і містити малі та великі латинські літери, а також цифри";
     }
 
     return null;
   };
 
-  setAlert = (status: string, text?: string): void => {
-    const el = document.querySelector(".alert") as HTMLElement | null;
+  const validateAll = () => {
+    Object.entries(fields).forEach(([name, value]) => {
+      const error = validate(name, value);
 
-    if (el) {
-      if (status === "progress") {
-        el.classList.add("alert--progress");
-      } else if (status === "success") {
-        el.classList.add("alert--success");
-      } else if (status === "error") {
-        el.classList.add("alert--error");
-      } else {
-        el.classList.add("alert--disabled");
+      if (error) {
+        setErrors({ ...errors, [name]: error });
       }
-
-      if (text) {
-        el.textContent = text;
-      }
-    }
+    });
   };
-}
+
+  const setAlert = (status: string, text?: string) => {
+    setAlertStatus(status);
+    setAlertText(text || "");
+  };
+
+  return {
+    fields,
+    errors,
+    setError,
+    disabled,
+    change,
+    validate,
+    validateAll,
+    alertStatus,
+    alertText,
+    setAlert,
+  };
+};
+
+export default useForm;

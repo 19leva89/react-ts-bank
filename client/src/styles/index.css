@@ -136,6 +136,11 @@ body {
 	font-weight: 400;
 }
 
+.wrapper__settings {
+	overflow-y: auto;
+	max-height: 730px;
+}
+
 .wrapper__movement {
 	position: absolute;
 	top: calc(50% - 135px);
