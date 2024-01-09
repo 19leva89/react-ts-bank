@@ -6,7 +6,7 @@ class User {
 		this.id = User.count++;
 		this.email = String(email).toLowerCase();
 		this.password = String(password);
-		this.isConfirm = false;
+		this.isConfirm = true;
 		this.balance = 0;
 		this.img = "./../img/user.svg";
 		this.transactions = [];
@@ -47,6 +47,12 @@ class User {
 			return true; // Пароль успішно змінено
 		}
 		return false; // Неправильний старий пароль
+	}
+
+	comparePassword(password) {
+		return this.password === String(password);
+		// Порівнюємо введений пароль зі збереженим у класі користувача
+		// Найкраще використовувати бібліотеки для хешування паролів для більшої безпеки
 	}
 
 	depositBalance(amount) {

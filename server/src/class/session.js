@@ -32,6 +32,15 @@ class Session {
 	static get = (token) => {
 		return Session.list.find((item) => item.token === token) || null
 	}
+
+	static delete = (token) => {
+		const index = Session.list.findIndex((item) => item.token === token);
+		if (index !== -1) {
+			Session.list.splice(index, 1);
+			return true; // Сесія успішно видалена
+		}
+		return false; // Сесія не знайдена за вказаним токеном
+	}
 }
 
 module.exports = { Session }

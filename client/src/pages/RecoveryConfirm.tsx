@@ -68,7 +68,7 @@ const RecoveryConfirmPage: FC = () => {
         // console.log("Data from server:", data);
 
         if (res.ok) {
-          dispatchRequest({ type: REQUEST_ACTION_TYPE.SUCCESS, payload: data });
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.SUCCESS, payload: data.message });
 
           saveSession(data.session);
 
@@ -99,7 +99,7 @@ const RecoveryConfirmPage: FC = () => {
       <ButtonBack />
 
       <form action="" method="" className="form__container" onSubmit={handleSubmit}>
-        <h1 className="form__title">Recover password</h1>
+        <h1 className="form__title">Changing the password</h1>
 
         <p className="form__text">Write the code you received</p>
 
@@ -116,7 +116,7 @@ const RecoveryConfirmPage: FC = () => {
 
           <div className="form__item">
             <FieldPassword
-              label="Password"
+              label="New password"
               name="password"
               placeholder="password"
               onPasswordChange={handleInput}
@@ -129,8 +129,14 @@ const RecoveryConfirmPage: FC = () => {
           type="submit"
           disabled={!isFormValid}
         >
-          Restore password
+          Change password
         </button>
+
+        {requestState.status === REQUEST_ACTION_TYPE.SUCCESS && (
+          <section className="form__item form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
 
         {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
           <section className="form__item form__alert">

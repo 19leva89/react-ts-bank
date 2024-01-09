@@ -16,7 +16,7 @@ class Confirm {
 
 		setTimeout(() => { Confirm.delete(newConfirm.code) }, 24 * 60 * 60 * 1000)
 
-		console.log(Confirm.list)
+		console.log("Server Auth Confirm.list:", Confirm.list)
 	}
 
 	static delete = (code) => {

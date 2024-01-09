@@ -61,6 +61,12 @@ const LoginPage: FC = () => {
           Continue
         </button>
 
+        {requestState.status === REQUEST_ACTION_TYPE.SUCCESS && (
+          <section className="form__item form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
+
         {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
           <section className="form__item form__alert">
             <Alert status={requestState.status} message={requestState.message} />

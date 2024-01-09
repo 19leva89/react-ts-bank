@@ -1,6 +1,7 @@
 import { FC, useReducer, ReactNode, createContext } from "react";
 
 import { AUTH_ACTION_TYPE, AuthState, authInitialState, authReducer } from "./authReducer";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "./requestReducer";
 import { getTokenSession } from "../script/session";
 
 interface AuthContextType {
@@ -35,6 +36,7 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [authState, dispatchAuth] = useReducer(authReducer, authInitialState);
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
 
   const isLogged = !!authState.token;
 
@@ -116,6 +118,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         dispatchAuth({
           type: AUTH_ACTION_TYPE.ADD_NOTIFICATION,
           payload: { eventTitle, eventTime, eventType },
+        });
+
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.SUCCESS,
+          payload: data.message,
         });
       } else {
         if (data && data.message) {

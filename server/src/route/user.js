@@ -19,6 +19,20 @@ router.post('/user-new-email', function (req, res) {
 		})
 	}
 
+	const user = User.list.find(user => user.id === parseInt(id) || user.email === newEmail);
+	if (!user) {
+		return res.status(400).json({
+			message: "Error. User not found"
+		});
+	}
+
+	const isPasswordValid = user.comparePassword(password);
+	if (!isPasswordValid) {
+		return res.status(400).json({
+			message: "Error. Invalid password"
+		});
+	}
+
 	try {
 		const userToUpdate = User.getByEmail(newEmail)
 
@@ -26,13 +40,6 @@ router.post('/user-new-email', function (req, res) {
 			return res.status(400).json({
 				message: "Error. A user with this email already exists"
 			})
-		}
-
-		const user = User.list.find(user => user.id === parseInt(id));
-		if (!user) {
-			return res.status(400).json({
-				message: "Error. User not found"
-			});
 		}
 
 		const emailChanged = user.changeEmail(newEmail);
@@ -63,14 +70,27 @@ router.post('/user-new-password', function (req, res) {
 		})
 	}
 
-	try {
-		const user = User.list.find(user => user.id === parseInt(id));
-		if (!user) {
-			return res.status(400).json({
-				message: "Error. User not found"
-			});
-		}
+	const user = User.list.find(user => user.id === parseInt(id));
+	if (!user) {
+		return res.status(400).json({
+			message: "Error. User not found"
+		});
+	}
 
+	const isPasswordValid = user.comparePassword(password);
+	if (!isPasswordValid) {
+		return res.status(400).json({
+			message: "Error. Invalid old password"
+		});
+	}
+
+	if (password === newPassword) {
+		return res.status(400).json({
+			message: "Error. New password should be different from the old password"
+		});
+	}
+
+	try {
 		const passwordChanged = user.changePassword(password, newPassword);
 		if (passwordChanged) {
 			return res.status(200).json({
@@ -233,6 +253,12 @@ router.post('/user-send', function (req, res) {
 		if (sender.balance < amount) {
 			return res.status(400).json({
 				message: "Error: Insufficient balance",
+			});
+		}
+
+		if (sender.id === recipient.id) {
+			return res.status(400).json({
+				message: "Error: Sender and recipient cannot be the same user",
 			});
 		}
 

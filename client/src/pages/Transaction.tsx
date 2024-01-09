@@ -22,8 +22,15 @@ const TransactionPage: FC = () => {
         dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
         const res = await fetch(`http://localhost:4000/user-transaction/${transactionId}`);
+
+        const data = await res.json();
+
         if (res.ok) {
-          const data = await res.json();
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.SUCCESS,
+            payload: data.message,
+          });
+
           setTransaction(data.transaction);
         } else {
           dispatchRequest({

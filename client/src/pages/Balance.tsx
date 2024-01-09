@@ -66,7 +66,7 @@ const BalancePage: FC = () => {
           if (data && data.userBalance !== undefined) {
             dispatchRequest({
               type: REQUEST_ACTION_TYPE.SUCCESS,
-              payload: "Success load",
+              payload: data.message,
             });
 
             dispatchAuth({
@@ -142,7 +142,7 @@ const BalancePage: FC = () => {
 
           dispatchRequest({
             type: REQUEST_ACTION_TYPE.SUCCESS,
-            payload: "Success load",
+            payload: data.message,
           });
 
           setTransactions(data.transactions);

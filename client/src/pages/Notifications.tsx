@@ -36,7 +36,7 @@ const NotificationsPage: FC = () => {
 
           dispatchRequest({
             type: REQUEST_ACTION_TYPE.SUCCESS,
-            payload: "Success load",
+            payload: data.message,
           });
 
           dispatchAuth({

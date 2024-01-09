@@ -74,6 +74,11 @@ const useLoginContainer = () => {
         // console.log("Data from server:", data);
 
         if (res.ok) {
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.SUCCESS,
+            payload: data.message,
+          });
+
           saveSession(data.session);
 
           const { token, user } = data.session;

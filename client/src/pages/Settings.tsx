@@ -104,6 +104,11 @@ const SettingsPage: FC = () => {
         // console.log("Data from server:", data);
 
         if (res.ok) {
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.SUCCESS,
+            payload: data.message,
+          });
+
           const token: string | null = authContext.authState.token;
           const updatedToken: string = token !== null ? token : "";
           authContext.changeEmail(updatedToken, data.user.email);
@@ -169,6 +174,11 @@ const SettingsPage: FC = () => {
         // console.log("Data from server:", data);
 
         if (res.ok) {
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.SUCCESS,
+            payload: data.message,
+          });
+
           const token: string | null = authContext.authState.token;
           const updatedToken: string = token !== null ? token : "";
           authContext.changePassword(updatedToken, data.user.password);
@@ -295,6 +305,12 @@ const SettingsPage: FC = () => {
         <button className={"button button__warning button__slim"} type="submit">
           Logout
         </button>
+
+        {requestState.status === REQUEST_ACTION_TYPE.SUCCESS && (
+          <section className="form__item form__item--slim form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
 
         {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
           <section className="form__item form__item--slim form__alert">

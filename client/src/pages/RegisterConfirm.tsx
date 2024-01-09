@@ -16,7 +16,7 @@ const RegisterConfirmPage: FC = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [code, setCode] = useState("");
 
-  console.log(code);
+  // console.log(code);
 
   const handleInput = (name: string, value: string | boolean) => {
     if (name === "code") {
@@ -56,7 +56,7 @@ const RegisterConfirmPage: FC = () => {
         // console.log("Data from server:", data);
 
         if (res.ok) {
-          dispatchRequest({ type: REQUEST_ACTION_TYPE.SUCCESS, payload: data });
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.SUCCESS, payload: data.message });
 
           saveSession(data.session);
 
@@ -110,6 +110,12 @@ const RegisterConfirmPage: FC = () => {
         >
           Confirm
         </button>
+
+        {requestState.status === REQUEST_ACTION_TYPE.SUCCESS && (
+          <section className="form__item form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
 
         {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
           <section className="form__item form__alert">

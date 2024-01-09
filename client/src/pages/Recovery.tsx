@@ -59,7 +59,13 @@ const RecoveryPage: FC = () => {
         // console.log("Data from server:", data);
 
         if (res.ok) {
-          saveSession(data.session);
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.SUCCESS,
+            payload: data.message,
+					});
+					
+					saveSession(data.session);
+					
           navigate("/recovery-confirm");
         } else {
           if (data && data.message) {
@@ -115,6 +121,12 @@ const RecoveryPage: FC = () => {
         >
           Send code
         </button>
+
+        {requestState.status === REQUEST_ACTION_TYPE.SUCCESS && (
+          <section className="form__item form__alert">
+            <Alert status={requestState.status} message={requestState.message} />
+          </section>
+        )}
 
         {requestState.status === REQUEST_ACTION_TYPE.ERROR && (
           <section className="form__item form__alert">
