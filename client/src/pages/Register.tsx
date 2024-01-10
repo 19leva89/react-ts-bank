@@ -1,4 +1,4 @@
-import { FC, useReducer } from "react";
+import { FC, useEffect, useReducer, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
@@ -15,11 +15,13 @@ const RegisterPage: FC = () => {
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const { fields, disabled, change, validateAll } = useForm();
 
-  console.log("disabled on register page", disabled);
+  useEffect(() => {
+    // Цей ефект викликається при зміні значень fields або disabled
+    console.log("Fields changed:", fields);
+    console.log("Disabled on form:", disabled);
+  }, [fields, disabled]);
 
-  const handleInput = (name: string, value: string) => {
-    change(name, value);
-  };
+  console.log("disabled on register page", disabled);
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -29,7 +31,7 @@ const RegisterPage: FC = () => {
       email: fields["email"],
       password: fields["password"],
     };
-    console.log("register userData:", userData);
+    // console.log("register userData:", userData);
 
     try {
       dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
@@ -83,18 +85,21 @@ const RegisterPage: FC = () => {
             <Field
               type="email"
               name="email"
-              placeholder="example@mail.com"
               label="Email"
-              onChange={handleInput}
+              placeholder="example@mail.com"
+              value={fields["email"]}
+              onChange={(value) => change("email", value)}
             />
           </div>
 
           <div className="form__item">
             <FieldPassword
-              label="Password"
+              type="password"
               name="password"
+              label="Password"
               placeholder="password"
-              onChange={handleInput}
+              value={fields["password"]}
+              onChange={(value) => change("password", value)}
             />
           </div>
         </div>

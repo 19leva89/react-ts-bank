@@ -85,9 +85,10 @@ const RegisterConfirmPage: FC = () => {
             <Field
               type="code"
               name="code"
-              placeholder="1234"
               label="Code"
-              // onCodeChange={handleInput}
+              placeholder="1234"
+              value={fields["code"]}
+              onChange={(value) => change("code", value)}
             />
           </div>
         </div>

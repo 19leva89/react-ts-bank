@@ -83,15 +83,24 @@ const RecoveryConfirmPage: FC = () => {
 
         <div className="form">
           <div className="form__item">
-            <Field type="code" name="code" placeholder="1234" label="Code" onChange={handleInput} />
+            <Field
+              type="code"
+              name="code"
+              label="Code"
+              placeholder="1234"
+              value={fields["code"]}
+              onChange={(value) => change("code", value)}
+            />
           </div>
 
           <div className="form__item">
             <FieldPassword
-              label="New password"
+              type="password"
               name="password"
+              label="New password"
               placeholder="password"
-              onChange={handleInput}
+              value={fields["password"]}
+              onChange={(value) => change("password", value)}
             />
           </div>
         </div>

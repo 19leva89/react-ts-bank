@@ -31,18 +31,21 @@ const LoginPage: FC = () => {
             <Field
               type="email"
               name="email"
-              placeholder="example@mail.com"
               label="Email"
-              onChange={handleInput}
+              placeholder="example@mail.com"
+              value={fields["email"]}
+              onChange={(value) => change("email", value)}
             />
           </div>
 
           <div className="form__item">
             <FieldPassword
-              label="Password"
+              type="password"
               name="password"
+              label="Password"
               placeholder="password"
-              onChange={handleInput}
+              value={fields["password"]}
+              onChange={(value) => change("password", value)}
             />
           </div>
         </div>

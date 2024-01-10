@@ -20,9 +20,6 @@ const useForm = () => {
   const [alertStatus, setAlertStatus] = useState<string>("");
   const [alertText, setAlertText] = useState<string>("");
 
-  // Приймає ім'я поля та його значення та оновлює стан полів форми (fields).
-  // Вона також викликає функцію validate, щоб перевірити валідність значення
-  // Оновлює стан помилок(errors).
   const change = (name: string, value: any) => {
     const error = validate(name, value);
     setFields({ ...fields, [name]: value });
@@ -36,29 +33,25 @@ const useForm = () => {
     }
 
     checkDisabled();
-    // console.log(`Field ${name} changed. Value: ${value}`);
   };
 
-  // Оновлює стан помилок для конкретного поля (errors[name]) на основі переданого значення помилки
   const setError = (name: string, error: string | null) => {
     setErrors({ ...errors, [name]: error });
   };
 
-  // Перевіряє, чи є хоча б одне поле форми з помилкою або з відсутніми значеннями.
-  // Якщо таке поле існує, вона встановлює disabled в true, інакше - false
   const checkDisabled = () => {
-    const hasErrors = Object.values(errors).some((error) => error !== null);
-    const areFieldsEmpty = Object.values(fields).some(
-      (value) => value === undefined || value === ""
-    );
+    let isDisabled = false;
 
-    setDisabled(hasErrors || areFieldsEmpty);
+    Object.keys(fields).forEach((name) => {
+      if (errors[name] !== null || fields[name] === undefined) {
+        isDisabled = true;
+      }
+    });
+
+    setDisabled(isDisabled);
   };
 
-  // Проводить валідацію значення поля форми з використанням регулярних виразів
-  const validate = (name: string, value: any): string | null => {
-    // console.log(`Validating field ${name}. Value: ${value}`);
-
+  const validate = (name: string, value: any) => {
     if (name === "email" && !REG_EXP_EMAIL.test(value)) {
       return "NEW Введіть коректне значення e-mail адреси";
     }
@@ -86,11 +79,7 @@ const useForm = () => {
     return null;
   };
 
-  // Викликає validate для всіх полів форми
-  // Оновлює стан помилок(errors) для кожного поля згідно результату валідації
   const validateAll = () => {
-    console.log("Validating all fields");
-
     Object.entries(fields).forEach(([name, value]) => {
       const error = validate(name, value);
 
@@ -100,7 +89,6 @@ const useForm = () => {
     });
   };
 
-  // Встановлює статус та текст повідомлення для відображення в алерті
   const setAlert = (status: string, text?: string) => {
     setAlertStatus(status);
     setAlertText(text || "");
@@ -115,13 +103,13 @@ const useForm = () => {
     errors,
     setError,
     disabled,
+    setDisabled,
     change,
     validate,
     validateAll,
     alertStatus,
     alertText,
     setAlert,
-    checkDisabled,
   };
 };
 

@@ -3,13 +3,14 @@ import useForm from "../../script/form";
 
 import "./style.css";
 
-type FieldProps = {
+interface FieldProps {
   type: string;
   name: string;
   label?: string;
   placeholder: string;
-  onChange?: (name: string, value: string) => void;
-};
+  value: any;
+  onChange: (name: string, value: string) => void;
+}
 
 export const Field: FC<FieldProps> = ({ type, name, placeholder, label }) => {
   const { errors, change } = useForm();
@@ -42,7 +43,7 @@ export const Field: FC<FieldProps> = ({ type, name, placeholder, label }) => {
           name={name}
           type={type}
           placeholder={placeholder}
-          onInput={handleInput}
+          onChange={handleInput}
           ref={inputRef}
         />
       </div>

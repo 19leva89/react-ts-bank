@@ -189,18 +189,21 @@ const SettingsPage: FC = () => {
               <Field
                 type="email"
                 name="newEmail"
-                placeholder="Email"
                 label="New email"
-                onChange={handleInput}
+                placeholder="Email"
+                value={fields["newEmail"]}
+                onChange={(value) => change("newEmail", value)}
               />
             </div>
 
             <div className="form__item form__item--slim">
               <FieldPassword
-                label="Password"
+                type="password"
                 name="password"
+                label="Password"
                 placeholder="Password"
-                onChange={handleInput}
+                value={fields["password"]}
+                onChange={(value) => change("password", value)}
               />
             </div>
           </div>
@@ -224,19 +227,23 @@ const SettingsPage: FC = () => {
           <div className="form form--slim">
             <div className="form__item form__item--slim">
               <FieldPassword
-                label="Old password"
+                type="password"
                 name="password"
+                label="Old password"
                 placeholder="Password"
-                onChange={handleInput}
+                value={fields["password"]}
+                onChange={(value) => change("password", value)}
               />
             </div>
 
             <div className="form__item form__item--slim">
               <FieldPassword
-                label="New password"
+                type="password"
                 name="newPassword"
+                label="New password"
                 placeholder="Password"
-                onChange={handleInput}
+                value={fields["newPassword"]}
+                onChange={(value) => change("newPassword", value)}
               />
             </div>
           </div>

@@ -100,9 +100,10 @@ const SendPage: FC = () => {
             <Field
               type="email"
               name="email"
-              placeholder="example@mail.com"
               label="Email"
-              // onEmailChange={handleInput}
+              placeholder="example@mail.com"
+              value={fields["email"]}
+              onChange={(value) => change("email", value)}
             />
           </div>
 
@@ -110,9 +111,10 @@ const SendPage: FC = () => {
             <Field
               type="number"
               name="amount"
-              placeholder="$"
               label="Amount"
-              // onAmountChange={handleInput}
+              placeholder="$"
+              value={fields["amount"]}
+              onChange={(value) => change("amount", value)}
             />
           </div>
         </div>

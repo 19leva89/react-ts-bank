@@ -89,9 +89,10 @@ const RecoveryPage: FC = () => {
             <Field
               type="email"
               name="email"
-              placeholder="example@mail.com"
               label="Email"
-              // onEmailChange={handleInput}
+              placeholder="example@mail.com"
+              value={fields["email"]}
+              onChange={(value) => change("email", value)}
             />
           </div>
         </div>

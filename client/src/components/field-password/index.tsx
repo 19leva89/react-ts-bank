@@ -3,12 +3,14 @@ import useForm from "../../script/form";
 
 import "./style.css";
 
-type FieldPasswordProps = {
+interface FieldPasswordProps {
+  type: string;
   name: string;
-  placeholder: string;
   label: string;
+  placeholder: string;
+  value: any;
   onChange: (name: string, value: string) => void;
-};
+}
 
 export const FieldPassword: FC<FieldPasswordProps> = ({ name, placeholder, label }) => {
   const [showPassword, setShowPassword] = useState(false);

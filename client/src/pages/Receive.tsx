@@ -115,7 +115,8 @@ const ReceivePage: FC = () => {
                 type="number"
                 name="amount"
                 placeholder="$"
-                // onAmountChange={handleInput}
+                value={fields["amount"]}
+                onChange={(value) => change("amount", value)}
               />
             </div>
           </div>
