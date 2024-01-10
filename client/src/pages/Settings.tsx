@@ -16,12 +16,7 @@ const SettingsPage: FC = () => {
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
-  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
-    useForm();
-
-  const handleInput = (name: string, value: string) => {
-    change(name, value);
-  };
+  const { fields, errors, disabled, change, validateAll } = useForm();
 
   const handleSubmitChangeEmail = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -190,20 +185,21 @@ const SettingsPage: FC = () => {
                 type="email"
                 name="newEmail"
                 label="New email"
-                placeholder="Email"
-                value={fields["newEmail"]}
+                placeholder="Enter your new email"
+                value={fields["newEmail"] || ""}
                 onChange={(value) => change("newEmail", value)}
+                error={errors["newEmail"]}
               />
             </div>
 
             <div className="form__item form__item--slim">
               <FieldPassword
-                type="password"
                 name="password"
                 label="Password"
-                placeholder="Password"
-                value={fields["password"]}
+                placeholder="Enter your password"
+                value={fields["password"] || ""}
                 onChange={(value) => change("password", value)}
+                error={errors["password"]}
               />
             </div>
           </div>
@@ -227,23 +223,23 @@ const SettingsPage: FC = () => {
           <div className="form form--slim">
             <div className="form__item form__item--slim">
               <FieldPassword
-                type="password"
                 name="password"
                 label="Old password"
-                placeholder="Password"
-                value={fields["password"]}
+                placeholder="Enter your old password"
+                value={fields["password"] || ""}
                 onChange={(value) => change("password", value)}
+                error={errors["password"]}
               />
             </div>
 
             <div className="form__item form__item--slim">
               <FieldPassword
-                type="password"
                 name="newPassword"
                 label="New password"
-                placeholder="Password"
-                value={fields["newPassword"]}
+                placeholder="Enter your new password"
+                value={fields["newPassword"] || ""}
                 onChange={(value) => change("newPassword", value)}
+                error={errors["newPassword"]}
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useReducer } from "react";
+import { useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveSession } from "./../../script/session";
 import useForm from "./../../script/form";
@@ -20,12 +20,7 @@ const useLoginContainer = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
-    useForm();
-
-  const handleInput = (name: string, value: string) => {
-    change(name, value);
-  };
+  const { fields, validateAll } = useForm();
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -89,7 +84,7 @@ const useLoginContainer = () => {
     }
   };
 
-  return { requestState, handleSubmit, handleInput };
+  return { requestState, handleSubmit };
 };
 
 export default useLoginContainer;

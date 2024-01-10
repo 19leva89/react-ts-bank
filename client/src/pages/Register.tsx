@@ -1,4 +1,4 @@
-import { FC, useEffect, useReducer, useState } from "react";
+import { FC, useReducer } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
@@ -13,15 +13,7 @@ import { Alert, Loader } from "../components/load";
 const RegisterPage: FC = () => {
   const navigate = useNavigate();
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const { fields, disabled, change, validateAll } = useForm();
-
-  useEffect(() => {
-    // Цей ефект викликається при зміні значень fields або disabled
-    console.log("Fields changed:", fields);
-    console.log("Disabled on form:", disabled);
-  }, [fields, disabled]);
-
-  console.log("disabled on register page", disabled);
+  const { fields, errors, disabled, change, validateAll } = useForm();
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -86,20 +78,21 @@ const RegisterPage: FC = () => {
               type="email"
               name="email"
               label="Email"
-              placeholder="example@mail.com"
-              value={fields["email"]}
+              placeholder="Enter your email"
+              value={fields["email"] || ""}
               onChange={(value) => change("email", value)}
+              error={errors["email"]}
             />
           </div>
 
           <div className="form__item">
             <FieldPassword
-              type="password"
               name="password"
               label="Password"
-              placeholder="password"
-              value={fields["password"]}
+              placeholder="Enter your password"
+              value={fields["password"] || ""}
               onChange={(value) => change("password", value)}
+              error={errors["password"]}
             />
           </div>
         </div>

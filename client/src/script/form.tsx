@@ -42,8 +42,16 @@ const useForm = () => {
   const checkDisabled = () => {
     let isDisabled = false;
 
+    // Перевірка наявності помилок у будь-якому з полів
+    Object.keys(errors).forEach((name) => {
+      if (errors[name] !== null) {
+        isDisabled = true;
+      }
+    });
+
+    // Перевірка наявності значення у всіх полях
     Object.keys(fields).forEach((name) => {
-      if (errors[name] !== null || fields[name] === undefined) {
+      if (fields[name] === undefined || fields[name] === "") {
         isDisabled = true;
       }
     });

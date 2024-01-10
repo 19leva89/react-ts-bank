@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useReducer, useState } from "react";
+import { FC, useContext, useReducer } from "react";
 import { AuthContext } from "../utils/authProvider";
 import { getTokenSession } from "../script/session";
 import useForm from "./../script/form";
@@ -24,14 +24,9 @@ const ReceivePage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
-    useForm();
+  const { fields, errors, disabled, change, validateAll } = useForm();
 
   // console.log("amount:", amount);
-
-  // const handleInput = (name: string, value: string) => {
-  //   change(name, value);
-  // };
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -115,8 +110,9 @@ const ReceivePage: FC = () => {
                 type="number"
                 name="amount"
                 placeholder="$"
-                value={fields["amount"]}
+                value={fields["amount"] || ""}
                 onChange={(value) => change("amount", value)}
+                error={errors["amount"]}
               />
             </div>
           </div>

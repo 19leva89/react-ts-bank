@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useContext, useReducer } from "react";
+import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
 import { getTokenSession, saveSession } from "../script/session";
@@ -13,17 +13,13 @@ const RegisterConfirmPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
-    useForm();
+  const { fields, errors, disabled, change, validateAll } = useForm();
 
   // console.log(code);
 
-  // const handleInput = (name: string, value: string) => {
-  //   change(name, value);
-  // };
-
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    validateAll();
 
     const token = getTokenSession();
     const userData = {
@@ -83,12 +79,13 @@ const RegisterConfirmPage: FC = () => {
         <div className="form">
           <div className="form__item">
             <Field
-              type="code"
+              type="number"
               name="code"
               label="Code"
-              placeholder="1234"
-              value={fields["code"]}
+              placeholder="Enter your code"
+              value={fields["code"] || ""}
               onChange={(value) => change("code", value)}
+              error={errors["code"]}
             />
           </div>
         </div>

@@ -1,6 +1,6 @@
-import { useState, useEffect, FC, SetStateAction, useContext, useReducer } from "react";
+import { FC, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../utils/authProvider";
+
 import { saveSession } from "../script/session";
 import useForm from "./../script/form";
 
@@ -11,17 +11,12 @@ import { Alert, Loader } from "../components/load";
 
 const RecoveryPage: FC = () => {
   const navigate = useNavigate();
-  const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
-    useForm();
-
-  const handleInput = (name: string, value: SetStateAction<string>) => {
-    change(name, value);
-  };
+  const { fields, errors, disabled, change, validateAll } = useForm();
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    validateAll();
 
     const userData = {
       email: fields["email"],
@@ -90,9 +85,10 @@ const RecoveryPage: FC = () => {
               type="email"
               name="email"
               label="Email"
-              placeholder="example@mail.com"
-              value={fields["email"]}
+              placeholder="Enter your email"
+              value={fields["email"] || ""}
               onChange={(value) => change("email", value)}
+              error={errors["email"]}
             />
           </div>
         </div>

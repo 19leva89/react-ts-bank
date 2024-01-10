@@ -1,62 +1,55 @@
-import { FC, Fragment, useState, ChangeEvent } from "react";
-import useForm from "../../script/form";
+import { FC, Fragment, useState } from "react";
 
 import "./style.css";
 
 interface FieldPasswordProps {
-  type: string;
   name: string;
   label: string;
   placeholder: string;
-  value: any;
-  onChange: (name: string, value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
+  error: string | null;
 }
 
-export const FieldPassword: FC<FieldPasswordProps> = ({ name, placeholder, label }) => {
+export const FieldPassword: FC<FieldPasswordProps> = ({
+  name,
+  label,
+  placeholder,
+  value,
+  onChange,
+  error,
+}) => {
   const [showPassword, setShowPassword] = useState(false);
-  const { errors, change } = useForm();
 
   const toggleIcon = () => {
     setShowPassword((prevState) => !prevState);
-  };
-
-  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    // console.log(`Поле ${name} було змінено на ${value}`);
-
-    // const error = validate(name, value);
-    // setError(name, error || "");
-
-    change(name, value);
   };
 
   return (
     <Fragment>
       <div className="field field--password">
         <label
-          htmlFor="password"
-          className={`field__label field__error ${errors[name] ? "field__error--active" : ""}`}
+          htmlFor={name}
+          className={`field__label field__error ${error ? "field__error--active" : ""}`}
         >
           {label}
         </label>
 
         <div className="field__wrapper">
           <input
-            className={`field__input validation ${errors[name] ? "validation--active" : ""}`}
-            name={name}
+            className={`field__input validation ${error ? "validation--active" : ""}`}
             type={showPassword ? "text" : "password"}
+            name={name}
             placeholder={placeholder}
-            onChange={handleInput}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
           />
           <span className={`field__icon ${showPassword ? "show" : ""}`} onClick={toggleIcon} />
         </div>
       </div>
 
-      <span
-        className={`form__error ${errors[name] ? "form__error--active" : ""}`}
-        data-name="password"
-      >
-        {errors[name]}
+      <span className={`form__error ${error ? "form__error--active" : ""}`} data-name={name}>
+        {error}
       </span>
     </Fragment>
   );

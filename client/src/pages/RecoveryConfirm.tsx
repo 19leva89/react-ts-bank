@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useContext, useReducer } from "react";
+import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
 import { saveSession } from "../script/session";
@@ -14,18 +14,14 @@ const RecoveryConfirmPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
-    useForm();
+  const { fields, errors, disabled, change, validateAll } = useForm();
 
   // console.log("code:", code);
   // console.log("password:", password);
 
-  const handleInput = (name: string, value: string) => {
-    change(name, value);
-  };
-
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    validateAll();
 
     const userData = {
       code: Number(fields["code"]),
@@ -84,23 +80,24 @@ const RecoveryConfirmPage: FC = () => {
         <div className="form">
           <div className="form__item">
             <Field
-              type="code"
+              type="number"
               name="code"
               label="Code"
-              placeholder="1234"
-              value={fields["code"]}
+              placeholder="Enter your code"
+              value={fields["code"] || ""}
               onChange={(value) => change("code", value)}
+              error={errors["code"]}
             />
           </div>
 
           <div className="form__item">
             <FieldPassword
-              type="password"
               name="password"
               label="New password"
-              placeholder="password"
-              value={fields["password"]}
+              placeholder="Enter your password"
+              value={fields["password"] || ""}
               onChange={(value) => change("password", value)}
+              error={errors["password"]}
             />
           </div>
         </div>

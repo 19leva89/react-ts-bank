@@ -11,9 +11,8 @@ import { Alert, Loader } from "../components/load";
 import useLoginContainer from "../containers/login";
 
 const LoginPage: FC = () => {
-  const { requestState, handleSubmit, handleInput } = useLoginContainer();
-  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
-    useForm();
+  const { requestState, handleSubmit } = useLoginContainer();
+  const { fields, errors, disabled, change } = useForm();
 
   return (
     <main className="main__container">
@@ -32,20 +31,21 @@ const LoginPage: FC = () => {
               type="email"
               name="email"
               label="Email"
-              placeholder="example@mail.com"
-              value={fields["email"]}
+              placeholder="Enter your email"
+              value={fields["email"] || ""}
               onChange={(value) => change("email", value)}
+              error={errors["email"]}
             />
           </div>
 
           <div className="form__item">
             <FieldPassword
-              type="password"
               name="password"
               label="Password"
-              placeholder="password"
-              value={fields["password"]}
+              placeholder="Enter your password"
+              value={fields["password"] || ""}
               onChange={(value) => change("password", value)}
+              error={errors["password"]}
             />
           </div>
         </div>

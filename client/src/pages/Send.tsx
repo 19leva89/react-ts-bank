@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useContext, useReducer } from "react";
+import { FC, useContext, useReducer } from "react";
 import { AuthContext } from "../utils/authProvider";
 import { getTokenSession } from "../script/session";
 import useForm from "./../script/form";
@@ -13,12 +13,7 @@ const SendPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
-    useForm();
-
-  // const handleInput = (name: string, value: string) => {
-  //   change(name, value);
-  // };
+  const { fields, errors, disabled, change, validateAll } = useForm();
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     // if (typeof amount !== "undefined" && Number(amount) > 0 && !isNaN(Number(amount))) {
@@ -101,9 +96,10 @@ const SendPage: FC = () => {
               type="email"
               name="email"
               label="Email"
-              placeholder="example@mail.com"
-              value={fields["email"]}
+              placeholder="Enter your email"
+              value={fields["email"] || ""}
               onChange={(value) => change("email", value)}
+              error={errors["email"]}
             />
           </div>
 
@@ -113,8 +109,9 @@ const SendPage: FC = () => {
               name="amount"
               label="Amount"
               placeholder="$"
-              value={fields["amount"]}
+              value={fields["amount"] || ""}
               onChange={(value) => change("amount", value)}
+              error={errors["amount"]}
             />
           </div>
         </div>
