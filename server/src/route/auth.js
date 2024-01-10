@@ -7,17 +7,12 @@ const { User } = require('./../class/user')
 const { Confirm } = require('./../class/confirm')
 const { Session } = require('./../class/session')
 
-User.create({
-	email: '19leva89@gmail.com',
-	password: '22vFq1989',
-})
 
 User.create({
 	email: 'mail@gmail.com',
-	password: '22vFq1989',
+	password: '123456',
 })
 
-Confirm.create("19leva89@gmail.com")
 Confirm.create("mail@gmail.com")
 
 // ================================================================

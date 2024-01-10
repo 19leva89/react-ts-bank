@@ -1,7 +1,7 @@
 import { FC, useState, useEffect, useContext, useReducer } from "react";
 import { AuthContext } from "../utils/authProvider";
-import { validateEmail, validateAmount } from "../utils/validators";
 import { getTokenSession } from "../script/session";
+import useForm from "./../script/form";
 
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
@@ -13,105 +13,76 @@ const SendPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [email, setEmail] = useState("");
-  const [amount, setAmount] = useState("");
+  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
+    useForm();
 
-  useEffect(() => {
-    const isEmailValid = email.trim() !== "";
-    const isAmountValid = parseFloat(amount as string) > 0;
+  // const handleInput = (name: string, value: string) => {
+  //   change(name, value);
+  // };
 
-    setIsFormValid(isEmailValid && isAmountValid);
-  }, [email, amount]);
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
+    // if (typeof amount !== "undefined" && Number(amount) > 0 && !isNaN(Number(amount))) {
+    //   // Логіка, якщо amount не є undefined і є числом більшим за 0
+    // } else {
+    //   console.error("Invalid amount");
+    //   return;
+    // }
+    event.preventDefault();
+    validateAll();
 
-  // console.log("email:", email);
-  // console.log("amount:", amount);
+    const userData = {
+      email: fields["email"],
+      amount: Number(fields["amount"]),
+      paymentSystem: "TestPayment",
+      status: "Send",
+    };
+    // console.log("Send userData", userData);
 
-  const handleInput = (name: string, value: string | number) => {
-    if (name === "email") {
-      const isValidEmail = validateEmail(value as string);
+    try {
+      dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-      if (isValidEmail) {
-        setEmail(value as string);
-      } else {
-        setEmail("");
-      }
-    }
-
-    if (name === "amount") {
-      const isValidAmount = validateAmount(value as string);
-
-      if (isValidAmount) {
-        setAmount(value as string);
-      } else {
-        setAmount("");
-      }
-    }
-  };
-
-  const handleSubmit = async (paymentSystem: string) => {
-    if (isFormValid && authContext) {
-      if (typeof amount !== "undefined" && Number(amount) > 0 && !isNaN(Number(amount))) {
-        // Логіка, якщо amount не є undefined і є числом більшим за 0
-      } else {
-        console.error("Invalid amount");
+      const token = getTokenSession(); // Отримання токену сесії
+      if (!token) {
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: "Session token not found" });
         return;
       }
 
-      const userData = {
-        email: email,
-        amount: Number(amount),
-        paymentSystem: paymentSystem,
-        status: "Send",
-      };
-      // console.log("Send userData", userData);
+      const res = await fetch("http://localhost:4000/user-send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify(userData),
+      });
 
-      try {
-        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+      const data = await res.json();
+      // console.log("Data from server:", data);
 
-        const token = getTokenSession(); // Отримання токену сесії
-        if (!token) {
-          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: "Session token not found" });
-          return;
-        }
-
-        const res = await fetch("http://localhost:4000/user-send", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-          body: JSON.stringify(userData),
-        });
-
-        const data = await res.json();
-        // console.log("Data from server:", data);
-
-        if (res.ok) {
-          dispatchRequest({
-            type: REQUEST_ACTION_TYPE.SUCCESS,
-            payload: data.message,
-          });
-          // console.log("Balance successfully updated!");
-
-          authContext.send(Number(amount));
-
-          setTimeout(() => {
-            navigate("/balance");
-          }, 1000);
-        } else {
-          if (data && data.message) {
-            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
-          } else {
-            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
-          }
-        }
-      } catch (err) {
+      if (res.ok) {
         dispatchRequest({
-          type: REQUEST_ACTION_TYPE.ERROR,
-          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+          type: REQUEST_ACTION_TYPE.SUCCESS,
+          payload: data.message,
         });
+        // console.log("Balance successfully updated!");
+
+        authContext.send(Number(fields["amount"]));
+
+        setTimeout(() => {
+          navigate("/balance");
+        }, 1000);
+      } else {
+        if (data && data.message) {
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
+        } else {
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
+        }
       }
+    } catch (err) {
+      dispatchRequest({
+        type: REQUEST_ACTION_TYPE.ERROR,
+        payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+      });
     }
   };
 
@@ -121,7 +92,7 @@ const SendPage: FC = () => {
 
       <ButtonBack />
 
-      <form action="" method="" className="form__container">
+      <form action="" method="" className="form__container" onSubmit={handleSubmit}>
         <h1 className="form__title">Send</h1>
 
         <div className="form">
@@ -131,7 +102,7 @@ const SendPage: FC = () => {
               name="email"
               placeholder="example@mail.com"
               label="Email"
-              onEmailChange={handleInput}
+              // onEmailChange={handleInput}
             />
           </div>
 
@@ -141,16 +112,16 @@ const SendPage: FC = () => {
               name="amount"
               placeholder="$"
               label="Amount"
-              onAmountChange={handleInput}
+              // onAmountChange={handleInput}
             />
           </div>
         </div>
 
         <button
-          className={`button button__primary ${isFormValid ? "" : "button--disabled"}`}
-          type="button"
-          disabled={!isFormValid}
-          onClick={() => handleSubmit(email)}
+          className={`button button__primary ${disabled ? "button--disabled" : ""}`}
+          type="submit"
+          disabled={disabled}
+          // onClick={() => handleSubmit(email)}
         >
           Send
         </button>

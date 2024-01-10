@@ -1,5 +1,6 @@
-import { FC, Fragment, useEffect, useRef, useState, ChangeEvent } from "react";
-import { validateCode, validateEmail, validateAmount } from "../../utils/validators";
+import { FC, Fragment, useEffect, useRef, ChangeEvent } from "react";
+import useForm from "../../script/form";
+
 import "./style.css";
 
 type FieldProps = {
@@ -7,25 +8,13 @@ type FieldProps = {
   name: string;
   label?: string;
   placeholder: string;
-  onEmailChange?: (name: string, value: string) => void;
-  onNewEmailChange?: (name: string, value: string) => void;
-  onAmountChange?: (name: string, value: string) => void;
-  onCodeChange?: (name: string, value: string) => void;
+  onChange?: (name: string, value: string) => void;
 };
 
-export const Field: FC<FieldProps> = ({
-  type,
-  name,
-  placeholder,
-  label,
-  onEmailChange,
-  onNewEmailChange,
-  onAmountChange,
-  onCodeChange,
-}) => {
-  const [error, setError] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+export const Field: FC<FieldProps> = ({ type, name, placeholder, label }) => {
+  const { errors, change } = useForm();
 
+  const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (inputRef && inputRef.current) {
       inputRef.current?.focus(); // Фокус на інпуті email після завантаження
@@ -36,57 +25,7 @@ export const Field: FC<FieldProps> = ({
     const { name, value } = e.target;
     // console.log(`Поле ${name} було змінено на ${value}`);
 
-    if (name === "email") {
-      const isValidEmail = validateEmail(value); // Перевірка на валідний email
-
-      if (!isValidEmail) {
-        setError("Введіть коректне значення e-mail адреси");
-      } else {
-        setError("");
-        if (onEmailChange) {
-          onEmailChange(name, value);
-        }
-      }
-    }
-
-    if (name === "newEmail") {
-      const isValidEmail = validateEmail(value); // Перевірка на валідний email
-
-      if (!isValidEmail) {
-        setError("Введіть коректне значення e-mail адреси");
-      } else {
-        setError("");
-        if (onNewEmailChange) {
-          onNewEmailChange(name, value);
-        }
-      }
-    }
-
-    if (name === "amount") {
-      const isValidAmount = validateAmount(value);
-
-      if (!isValidAmount) {
-        setError("Введіть коректне число більше нуля");
-      } else {
-        setError("");
-        if (onAmountChange) {
-          onAmountChange(name, value);
-        }
-      }
-    }
-
-    if (name === "code") {
-      const isValidCode = validateCode(value);
-
-      if (!isValidCode) {
-        setError("Введіть число з чотирьох цифр");
-      } else {
-        setError("");
-        if (onCodeChange) {
-          onCodeChange(name, value);
-        }
-      }
-    }
+    change(name, value);
   };
 
   return (
@@ -94,12 +33,12 @@ export const Field: FC<FieldProps> = ({
       <div className="field">
         <label
           htmlFor={name}
-          className={`field__label field__error ${error ? "field__error--active" : ""}`}
+          className={`field__label field__error ${errors[name] ? "field__error--active" : ""}`}
         >
           {label}
         </label>
         <input
-          className={`field__input validation ${error ? "validation--active" : ""}`}
+          className={`field__input validation ${errors[name] ? "validation--active" : ""}`}
           name={name}
           type={type}
           placeholder={placeholder}
@@ -107,8 +46,8 @@ export const Field: FC<FieldProps> = ({
           ref={inputRef}
         />
       </div>
-      <span className={`form__error ${error ? "form__error--active" : ""}`} data-name={name}>
-        {error}
+      <span className={`form__error ${errors[name] ? "form__error--active" : ""}`} data-name={name}>
+        {errors[name]}
       </span>
     </Fragment>
   );

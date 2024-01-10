@@ -191,7 +191,7 @@ const SettingsPage: FC = () => {
                 name="newEmail"
                 placeholder="Email"
                 label="New email"
-                onNewEmailChange={handleInput}
+                onChange={handleInput}
               />
             </div>
 
@@ -200,7 +200,7 @@ const SettingsPage: FC = () => {
                 label="Password"
                 name="password"
                 placeholder="Password"
-                onPasswordChange={handleInput}
+                onChange={handleInput}
               />
             </div>
           </div>
@@ -227,7 +227,7 @@ const SettingsPage: FC = () => {
                 label="Old password"
                 name="password"
                 placeholder="Password"
-                onPasswordChange={handleInput}
+                onChange={handleInput}
               />
             </div>
 
@@ -236,7 +236,7 @@ const SettingsPage: FC = () => {
                 label="New password"
                 name="newPassword"
                 placeholder="Password"
-                onPasswordChange={handleInput}
+                onChange={handleInput}
               />
             </div>
           </div>

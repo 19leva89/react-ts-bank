@@ -7,23 +7,12 @@ type FieldPasswordProps = {
   name: string;
   placeholder: string;
   label: string;
-  onPasswordChange: (name: string, value: string) => void;
+  onChange: (name: string, value: string) => void;
 };
 
 export const FieldPassword: FC<FieldPasswordProps> = ({ name, placeholder, label }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const {
-    fields,
-    errors,
-    setError,
-    disabled,
-    change,
-    validate,
-    validateAll,
-    alertStatus,
-    alertText,
-    setAlert,
-  } = useForm();
+  const { errors, change } = useForm();
 
   const toggleIcon = () => {
     setShowPassword((prevState) => !prevState);
@@ -33,8 +22,8 @@ export const FieldPassword: FC<FieldPasswordProps> = ({ name, placeholder, label
     const { name, value } = e.target;
     // console.log(`Поле ${name} було змінено на ${value}`);
 
-    const error = validate(name, value);
-    setError(name, error || "");
+    // const error = validate(name, value);
+    // setError(name, error || "");
 
     change(name, value);
   };

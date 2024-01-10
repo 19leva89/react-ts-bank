@@ -1,8 +1,8 @@
 import { useState, useEffect, FC, SetStateAction, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
-import { validateEmail } from "../utils/validators";
 import { saveSession } from "../script/session";
+import useForm from "./../script/form";
 
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
@@ -13,81 +13,63 @@ const RecoveryPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    const isEmailValid = email.trim() !== "";
-
-    setIsFormValid(isEmailValid);
-  }, [email]);
-
-  // console.log("email:", email);
+  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
+    useForm();
 
   const handleInput = (name: string, value: SetStateAction<string>) => {
-    if (name === "email") {
-      const isValidEmail = validateEmail(value as string);
-
-      if (isValidEmail) {
-        setEmail(value as string);
-      } else {
-        setEmail("");
-      }
-    }
+    change(name, value);
   };
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    if (isFormValid && authContext) {
-      const userData = {
-        email: email,
-      };
+    const userData = {
+      email: fields["email"],
+    };
 
-      try {
-        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+    try {
+      dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-        const res = await fetch("http://localhost:4000/recovery", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        });
+      const res = await fetch("http://localhost:4000/recovery", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
-        const data = await res.json();
-        // console.log("Data from server:", data);
+      const data = await res.json();
+      // console.log("Data from server:", data);
 
-        if (res.ok) {
-          dispatchRequest({
-            type: REQUEST_ACTION_TYPE.SUCCESS,
-            payload: data.message,
-					});
-					
-					saveSession(data.session);
-					
-          navigate("/recovery-confirm");
-        } else {
-          if (data && data.message) {
-            dispatchRequest({
-              type: REQUEST_ACTION_TYPE.ERROR,
-              payload: `Server error: ${data.message}`,
-            });
-          } else {
-            // Обробка загальної помилки від сервера
-            dispatchRequest({
-              type: REQUEST_ACTION_TYPE.ERROR,
-              payload: `Server error: ${res.statusText}`,
-            });
-          }
-        }
-      } catch (err) {
-        // Обробити помилку від fetch
+      if (res.ok) {
         dispatchRequest({
-          type: REQUEST_ACTION_TYPE.ERROR,
-          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+          type: REQUEST_ACTION_TYPE.SUCCESS,
+          payload: data.message,
         });
+
+        saveSession(data.session);
+
+        navigate("/recovery-confirm");
+      } else {
+        if (data && data.message) {
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: `Server error: ${data.message}`,
+          });
+        } else {
+          // Обробка загальної помилки від сервера
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: `Server error: ${res.statusText}`,
+          });
+        }
       }
+    } catch (err) {
+      // Обробити помилку від fetch
+      dispatchRequest({
+        type: REQUEST_ACTION_TYPE.ERROR,
+        payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+      });
     }
   };
 
@@ -109,15 +91,15 @@ const RecoveryPage: FC = () => {
               name="email"
               placeholder="example@mail.com"
               label="Email"
-              onEmailChange={handleInput}
+              // onEmailChange={handleInput}
             />
           </div>
         </div>
 
         <button
-          className={`button button__primary ${isFormValid ? "" : "button--disabled"}`}
+          className={`button button__primary ${disabled ? "button--disabled" : ""}`}
           type="submit"
-          disabled={!isFormValid}
+          disabled={disabled}
         >
           Send code
         </button>

@@ -13,8 +13,9 @@ import { Alert, Loader } from "../components/load";
 const RegisterPage: FC = () => {
   const navigate = useNavigate();
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
-    useForm();
+  const { fields, disabled, change, validateAll } = useForm();
+
+  console.log("disabled on register page", disabled);
 
   const handleInput = (name: string, value: string) => {
     change(name, value);
@@ -84,7 +85,7 @@ const RegisterPage: FC = () => {
               name="email"
               placeholder="example@mail.com"
               label="Email"
-              onEmailChange={handleInput}
+              onChange={handleInput}
             />
           </div>
 
@@ -93,7 +94,7 @@ const RegisterPage: FC = () => {
               label="Password"
               name="password"
               placeholder="password"
-              onPasswordChange={handleInput}
+              onChange={handleInput}
             />
           </div>
         </div>

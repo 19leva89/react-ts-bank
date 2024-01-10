@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { NavLink } from "react-router-dom";
 import { REQUEST_ACTION_TYPE } from "../utils/requestReducer";
+import useForm from "./../script/form";
 
 import { Field } from "../components/field";
 import { FieldPassword } from "../components/field-password";
@@ -10,7 +11,9 @@ import { Alert, Loader } from "../components/load";
 import useLoginContainer from "../containers/login";
 
 const LoginPage: FC = () => {
-  const { isFormValid, requestState, handleInput, handleSubmit } = useLoginContainer();
+  const { requestState, handleSubmit, handleInput } = useLoginContainer();
+  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
+    useForm();
 
   return (
     <main className="main__container">
@@ -30,7 +33,7 @@ const LoginPage: FC = () => {
               name="email"
               placeholder="example@mail.com"
               label="Email"
-              onEmailChange={handleInput}
+              onChange={handleInput}
             />
           </div>
 
@@ -39,7 +42,7 @@ const LoginPage: FC = () => {
               label="Password"
               name="password"
               placeholder="password"
-              onPasswordChange={handleInput}
+              onChange={handleInput}
             />
           </div>
         </div>
@@ -54,9 +57,9 @@ const LoginPage: FC = () => {
         </div>
 
         <button
-          className={`button button__primary ${isFormValid ? "" : "button--disabled"}`}
+          className={`button button__primary ${disabled ? "button--disabled" : ""}`}
           type="submit"
-          disabled={!isFormValid}
+          disabled={disabled}
         >
           Continue
         </button>

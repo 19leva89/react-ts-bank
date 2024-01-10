@@ -1,7 +1,7 @@
 import { FC, useContext, useEffect, useReducer, useState } from "react";
 import { AuthContext } from "../utils/authProvider";
-import { validateAmount } from "../utils/validators";
 import { getTokenSession } from "../script/session";
+import useForm from "./../script/form";
 
 import { ButtonBack } from "../components/button-back";
 import { Field } from "../components/field";
@@ -24,92 +24,75 @@ const ReceivePage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const [isFormAmountValid, setIsFormAmountValid] = useState(false);
-  const [amount, setAmount] = useState("");
-
-  useEffect(() => {
-    const isAmountValid = parseFloat(amount as string) > 0;
-
-    setIsFormAmountValid(isAmountValid);
-  }, [amount]);
+  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
+    useForm();
 
   // console.log("amount:", amount);
 
-  const handleInput = (name: string, value: string) => {
-    if (name === "amount") {
-      const isValidAmount = validateAmount(value as string);
+  // const handleInput = (name: string, value: string) => {
+  //   change(name, value);
+  // };
 
-      if (isValidAmount) {
-        setAmount(value as string);
-      } else {
-        setAmount("");
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    validateAll();
+
+    const userData = {
+      amount: Number(fields["amount"]),
+      paymentSystem: "Test",
+      status: "Receive",
+    };
+
+    try {
+      dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
+      const token = getTokenSession(); // Отримання токену сесії
+      if (!token) {
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.ERROR,
+          payload: "Session token not found",
+        });
+        return;
       }
-    }
-  };
 
-  const handleSubmit = async (paymentSystem: string) => {
-    if (isFormAmountValid && authContext) {
-      if (typeof amount !== "undefined" && Number(amount) > 0 && !isNaN(Number(amount))) {
-        const userData = {
-          amount: Number(amount),
-          paymentSystem: paymentSystem,
-          status: "Receive",
-        };
+      const res = await fetch("http://localhost:4000/user-receive", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify(userData),
+      });
 
-        try {
-          dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+      const data = await res.json();
+      // console.log("Data from server:", data);
 
-          const token = getTokenSession(); // Отримання токену сесії
-          if (!token) {
-            dispatchRequest({
-              type: REQUEST_ACTION_TYPE.ERROR,
-              payload: "Session token not found",
-            });
-            return;
-          }
+      if (res.ok) {
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.SUCCESS,
+          payload: data.message,
+        });
 
-          const res = await fetch("http://localhost:4000/user-receive", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token,
-            },
-            body: JSON.stringify(userData),
+        authContext.receive(Number(fields["amount"]));
+
+        setTimeout(() => {
+          navigate("/balance");
+        }, 1000);
+      } else {
+        if (data && data.message) {
+          // Обробка повідомлення про помилку з сервера
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
+        } else {
+          // Обробка загальної помилки від сервера
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: `Server error: ${res.statusText}`,
           });
-
-          const data = await res.json();
-          // console.log("Data from server:", data);
-
-          if (res.ok) {
-            dispatchRequest({
-              type: REQUEST_ACTION_TYPE.SUCCESS,
-              payload: data.message,
-            });
-
-            authContext.receive(Number(amount));
-
-            setTimeout(() => {
-              navigate("/balance");
-            }, 1000);
-          } else {
-            if (data && data.message) {
-              // Обробка повідомлення про помилку з сервера
-              dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
-            } else {
-              // Обробка загальної помилки від сервера
-              dispatchRequest({
-                type: REQUEST_ACTION_TYPE.ERROR,
-                payload: `Server error: ${res.statusText}`,
-              });
-            }
-          }
-        } catch (err) {
-          // Обробити помилку від fetch
-          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: `Fetch error: ${err}` });
         }
-      } else {
-        console.error("Invalid amount");
       }
+    } catch (err) {
+      // Обробити помилку від fetch
+      dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: `Fetch error: ${err}` });
     }
   };
 
@@ -128,7 +111,12 @@ const ReceivePage: FC = () => {
           <div className="form form--slim">
             <p className="form__text form__text--big form__text--left">Receive amount</p>
             <div className="form__item form__item--slim">
-              <Field type="number" name="amount" placeholder="$" onAmountChange={handleInput} />
+              <Field
+                type="number"
+                name="amount"
+                placeholder="$"
+                // onAmountChange={handleInput}
+              />
             </div>
           </div>
 
@@ -137,11 +125,11 @@ const ReceivePage: FC = () => {
           <p className="form__text form__text--big form__text--left">Payment system</p>
           <button
             className={`button button__transparent button__fat ${
-              isFormAmountValid ? "" : "button--disabled"
+              disabled ? "button--disabled" : ""
             }`}
             type="button"
-            disabled={!isFormAmountValid}
-            onClick={() => handleSubmit("Stripe")}
+            disabled={disabled}
+            // onClick={() => handleSubmit("Stripe")}
           >
             <div className="payment__container">
               <div className="payment__wrapper">
@@ -162,11 +150,11 @@ const ReceivePage: FC = () => {
 
           <button
             className={`button button__transparent button__fat ${
-              isFormAmountValid ? "" : "button--disabled"
+              disabled ? "button--disabled" : ""
             }`}
             type="button"
-            disabled={!isFormAmountValid}
-            onClick={() => handleSubmit("Coinbase")}
+            disabled={disabled}
+            // onClick={() => handleSubmit("Coinbase")}
           >
             <div className="payment__container">
               <div className="payment__wrapper">

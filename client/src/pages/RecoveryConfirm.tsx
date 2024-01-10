@@ -1,8 +1,8 @@
 import { FC, useState, useEffect, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
-import { validateCode } from "../utils/validators";
 import { saveSession } from "../script/session";
+import useForm from "./../script/form";
 
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
@@ -14,81 +14,59 @@ const RecoveryConfirmPage: FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [code, setCode] = useState("");
-  const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    const isCodeValid = code.trim() !== "";
-    const isPasswordValid = password.trim() !== "";
-
-    setIsFormValid(isCodeValid && isPasswordValid);
-  }, [code, password]);
+  const { fields, errors, disabled, change, validateAll, alertStatus, alertText, setAlert } =
+    useForm();
 
   // console.log("code:", code);
   // console.log("password:", password);
 
-  const handleInput = (name: string, value: string | number) => {
-    if (name === "code") {
-      const isValidCode = validateCode(value as string);
-
-      if (isValidCode) {
-        setCode(value as string);
-      } else {
-        setCode("");
-      }
-    }
-
-    if (name === "password") {
-      setPassword(value as string);
-    }
+  const handleInput = (name: string, value: string) => {
+    change(name, value);
   };
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    if (isFormValid && authContext) {
-      const userData = {
-        code: Number(code),
-        password: password,
-      };
-      // console.log("recovery-confirm userData:", userData);
+    const userData = {
+      code: Number(fields["code"]),
+      password: fields["password"],
+    };
+    // console.log("recovery-confirm userData:", userData);
 
-      try {
-        dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+    try {
+      dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-        const res = await fetch("http://localhost:4000/recovery-confirm", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        });
-        const data = await res.json();
-        // console.log("Data from server:", data);
+      const res = await fetch("http://localhost:4000/recovery-confirm", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+      const data = await res.json();
+      // console.log("Data from server:", data);
 
-        if (res.ok) {
-          dispatchRequest({ type: REQUEST_ACTION_TYPE.SUCCESS, payload: data.message });
+      if (res.ok) {
+        dispatchRequest({ type: REQUEST_ACTION_TYPE.SUCCESS, payload: data.message });
 
-          saveSession(data.session);
+        saveSession(data.session);
 
-          const { token, user } = data.session;
-          authContext.recovery(token, user);
+        const { token, user } = data.session;
+        authContext.recovery(token, user);
 
-          navigate("/balance");
+        navigate("/balance");
+      } else {
+        if (data && data.message) {
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
         } else {
-          if (data && data.message) {
-            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: data.message });
-          } else {
-            dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
-          }
+          dispatchRequest({ type: REQUEST_ACTION_TYPE.ERROR, payload: res.statusText });
         }
-      } catch (err) {
-        dispatchRequest({
-          type: REQUEST_ACTION_TYPE.ERROR,
-          payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
-        });
       }
+    } catch (err) {
+      dispatchRequest({
+        type: REQUEST_ACTION_TYPE.ERROR,
+        payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+      });
     }
   };
 
@@ -105,13 +83,7 @@ const RecoveryConfirmPage: FC = () => {
 
         <div className="form">
           <div className="form__item">
-            <Field
-              type="code"
-              name="code"
-              placeholder="1234"
-              label="Code"
-              onCodeChange={handleInput}
-            />
+            <Field type="code" name="code" placeholder="1234" label="Code" onChange={handleInput} />
           </div>
 
           <div className="form__item">
@@ -119,15 +91,15 @@ const RecoveryConfirmPage: FC = () => {
               label="New password"
               name="password"
               placeholder="password"
-              onPasswordChange={handleInput}
+              onChange={handleInput}
             />
           </div>
         </div>
 
         <button
-          className={`button button__primary ${isFormValid ? "" : "button--disabled"}`}
+          className={`button button__primary ${disabled ? "button--disabled" : ""}`}
           type="submit"
-          disabled={!isFormValid}
+          disabled={disabled}
         >
           Change password
         </button>
