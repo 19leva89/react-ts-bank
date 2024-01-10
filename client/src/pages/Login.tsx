@@ -1,6 +1,8 @@
-import { FC } from "react";
-import { NavLink } from "react-router-dom";
-import { REQUEST_ACTION_TYPE } from "../utils/requestReducer";
+import { FC, useContext, useReducer } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
+import { AuthContext } from "../utils/authProvider";
+import { saveSession } from "../script/session";
 import useForm from "./../script/form";
 
 import { Field } from "../components/field";
@@ -8,11 +10,74 @@ import { FieldPassword } from "../components/field-password";
 import { ButtonBack } from "../components/button-back";
 import { Alert, Loader } from "../components/load";
 
-import useLoginContainer from "../containers/login";
-
 const LoginPage: FC = () => {
-  const { requestState, handleSubmit } = useLoginContainer();
-  const { fields, errors, disabled, change } = useForm();
+  const { fields, errors, disabled, change, validateAll } = useForm();
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+  const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
+
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    validateAll();
+
+    const userData = {
+      email: fields["email"],
+      password: fields["password"],
+    };
+    // console.log("userData:", userData);
+
+    try {
+      dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
+
+      const res = await fetch("http://localhost:4000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await res.json();
+      // console.log("Data from server:", data);
+
+      if (res.ok) {
+        dispatchRequest({
+          type: REQUEST_ACTION_TYPE.SUCCESS,
+          payload: data.message,
+        });
+
+        saveSession(data.session);
+
+        const { token, user } = data.session;
+        authContext.login(token, user);
+
+        if (data.session.user.isConfirm) {
+          navigate("/balance");
+        } else {
+          navigate("/register-confirm");
+        }
+      } else {
+        if (data && data.message) {
+          // Обробка повідомлення про помилку з сервера
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: data.message,
+          });
+        } else {
+          // Обробка загальної помилки від сервера
+          dispatchRequest({
+            type: REQUEST_ACTION_TYPE.ERROR,
+            payload: `Server error: ${res.statusText}`,
+          });
+        }
+      }
+    } catch (err) {
+      dispatchRequest({
+        type: REQUEST_ACTION_TYPE.ERROR,
+        payload: `Fetch error: ${err instanceof Error ? err.message : String(err)}`,
+      });
+    }
+  };
 
   return (
     <main className="main__container">

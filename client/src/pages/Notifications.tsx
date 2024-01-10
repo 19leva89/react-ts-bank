@@ -1,12 +1,12 @@
 import { FC, useEffect, useReducer } from "react";
+import { AUTH_ACTION_TYPE, authInitialState, authReducer } from "../utils/authReducer";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
+import { getTokenSession } from "../script/session";
 
 import { ButtonBack } from "../components/button-back";
+import { Alert, Loader, Skeleton } from "../components/load";
 import notificationAnnouncement from "./../img/notification-btn.svg";
 import notificationWarning from "./../img/danger-btn.svg";
-import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
-import { Alert, Loader, Skeleton } from "../components/load";
-import { getTokenSession } from "../script/session";
-import { AUTH_ACTION_TYPE, authInitialState, authReducer } from "../utils/authReducer";
 
 const NotificationsPage: FC = () => {
   const [authState, dispatchAuth] = useReducer(authReducer, authInitialState);

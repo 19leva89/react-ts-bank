@@ -1,12 +1,12 @@
 import { FC, useContext, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { getTokenSession } from "../script/session";
 import useForm from "./../script/form";
 
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
-import { useNavigate } from "react-router-dom";
-import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { Alert, Loader } from "../components/load";
 
 const SendPage: FC = () => {
@@ -15,20 +15,13 @@ const SendPage: FC = () => {
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const { fields, errors, disabled, change, validateAll } = useForm();
 
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
-    // if (typeof amount !== "undefined" && Number(amount) > 0 && !isNaN(Number(amount))) {
-    //   // Логіка, якщо amount не є undefined і є числом більшим за 0
-    // } else {
-    //   console.error("Invalid amount");
-    //   return;
-    // }
-    event.preventDefault();
+  const handleSubmit = async (paymentSystem: string) => {
     validateAll();
 
     const userData = {
       email: fields["email"],
       amount: Number(fields["amount"]),
-      paymentSystem: "TestPayment",
+      paymentSystem: paymentSystem,
       status: "Send",
     };
     // console.log("Send userData", userData);
@@ -87,7 +80,7 @@ const SendPage: FC = () => {
 
       <ButtonBack />
 
-      <form action="" method="" className="form__container" onSubmit={handleSubmit}>
+      <form action="" method="" className="form__container">
         <h1 className="form__title">Send</h1>
 
         <div className="form">
@@ -118,9 +111,9 @@ const SendPage: FC = () => {
 
         <button
           className={`button button__primary ${disabled ? "button--disabled" : ""}`}
-          type="submit"
+          type="button"
           disabled={disabled}
-          // onClick={() => handleSubmit(email)}
+          onClick={() => handleSubmit(fields["email"])}
         >
           Send
         </button>

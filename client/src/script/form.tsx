@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const REG_EXP_EMAIL = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 export const REG_EXP_PASSWORD = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 export const REG_EXP_AMOUNT = /^(?!0+(\.0+)?$)\d+(\.\d{1,2})?$/;
-export const REG_EXP_CODE = /^\d{0,4}$/;
+export const REG_EXP_CODE = /^\d{4}$/;
 
 interface Fields {
   [key: string]: any;
@@ -21,22 +21,49 @@ const useForm = () => {
   const [alertText, setAlertText] = useState<string>("");
 
   const change = (name: string, value: any) => {
-    const error = validate(name, value);
     setFields({ ...fields, [name]: value });
+    const newErrors = { ...errors, [name]: validate(name, value) };
+    setErrors(newErrors);
 
-    if (error) {
-      setErrors({ ...errors, [name]: error });
-    } else {
-      const updatedErrors = { ...errors };
-      delete updatedErrors[name];
-      setErrors(updatedErrors);
-    }
-
-    checkDisabled();
+    // Перевірка помилок у всіх полях після кожного вводу
+    const hasErrors = Object.values(newErrors).some((error) => error !== null);
+    setDisabled(hasErrors);
   };
 
-  const setError = (name: string, error: string | null) => {
-    setErrors({ ...errors, [name]: error });
+  const validate = (name: string, value: any) => {
+    if ((name === "email" || name === "newEmail") && !REG_EXP_EMAIL.test(value)) {
+      return "Please enter a valid email address";
+    }
+
+    if (
+      (name === "password" || name === "oldPassword" || name === "newPassword") &&
+      !REG_EXP_PASSWORD.test(value)
+    ) {
+      return "The password must be at least 8 characters long and contain both uppercase and lowercase letters, as well as numbers";
+    }
+
+    if (name === "amount" && !REG_EXP_AMOUNT.test(value)) {
+      return "Please input a valid number above zero";
+    }
+
+    if (name === "code" && !REG_EXP_CODE.test(value)) {
+      return "Enter a four-digit number";
+    }
+
+    return null;
+  };
+
+  const validateAll = () => {
+    Object.entries(fields).forEach(([name, value]) => {
+      const error = validate(name, value);
+
+      if (error) {
+        setErrors({ ...errors, [name]: error });
+      }
+    });
+
+    // Викликаємо checkDisabled після валідації всіх полів
+    checkDisabled();
   };
 
   const checkDisabled = () => {
@@ -59,42 +86,8 @@ const useForm = () => {
     setDisabled(isDisabled);
   };
 
-  const validate = (name: string, value: any) => {
-    if (name === "email" && !REG_EXP_EMAIL.test(value)) {
-      return "NEW Введіть коректне значення e-mail адреси";
-    }
-
-    if (name === "newEmail" && !REG_EXP_EMAIL.test(value)) {
-      return "NEW Введіть коректне значення e-mail адреси";
-    }
-
-    if (name === "password" && !REG_EXP_PASSWORD.test(value)) {
-      return "NEW Пароль повинен бути мінімум 8 символів у довжину і містити малі та великі латинські літери, а також цифри";
-    }
-
-    if (name === "newPassword" && !REG_EXP_PASSWORD.test(value)) {
-      return "NEW Пароль повинен бути мінімум 8 символів у довжину і містити малі та великі латинські літери, а також цифри";
-    }
-
-    if (name === "amount" && !REG_EXP_AMOUNT.test(value)) {
-      return "NEW Введіть коректне число більше нуля";
-    }
-
-    if (name === "code" && !REG_EXP_AMOUNT.test(value)) {
-      return "NEW Введіть число з чотирьох цифр";
-    }
-
-    return null;
-  };
-
-  const validateAll = () => {
-    Object.entries(fields).forEach(([name, value]) => {
-      const error = validate(name, value);
-
-      if (error) {
-        setErrors({ ...errors, [name]: error });
-      }
-    });
+  const setError = (name: string, error: string | null) => {
+    setErrors({ ...errors, [name]: error });
   };
 
   const setAlert = (status: string, text?: string) => {
@@ -102,22 +95,12 @@ const useForm = () => {
     setAlertText(text || "");
   };
 
-  useEffect(() => {
-    console.log("Disabled on form:", disabled);
-  }, [disabled]);
-
   return {
     fields,
     errors,
-    setError,
     disabled,
-    setDisabled,
     change,
-    validate,
     validateAll,
-    alertStatus,
-    alertText,
-    setAlert,
   };
 };
 

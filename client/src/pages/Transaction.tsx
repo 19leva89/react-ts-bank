@@ -1,10 +1,10 @@
 import { FC, useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { format } from "date-fns";
 
 import { ButtonBack } from "../components/button-back";
 import { Divider } from "../components/divider";
-import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { Alert, Loader } from "../components/load";
 
 const TransactionPage: FC = () => {

@@ -2,11 +2,11 @@ import { FC, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { saveSession } from "../script/session";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import useForm from "./../script/form";
 
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
-import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { Alert, Loader } from "../components/load";
 
 const RecoveryPage: FC = () => {

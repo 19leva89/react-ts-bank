@@ -35,7 +35,7 @@ type PaymentSystemImages = {
 const paymentSystemImages: PaymentSystemImages = {
   Stripe: stripe,
   Coinbase: coinbase,
-  // Додайте інші системи оплати, які вам потрібні тут
+  // Інші системи оплати
 };
 
 const BalancePage: FC = () => {

@@ -1,24 +1,23 @@
 import { FC, useContext, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
 import { getTokenSession } from "../script/session";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import useForm from "./../script/form";
 
 import { ButtonBack } from "../components/button-back";
 import { Field } from "../components/field";
+import { Alert, Loader } from "../components/load";
+import { Divider } from "../components/divider";
 
 import stripe from "./../img/payment/stripe.svg";
 import coinbase from "./../img/payment/coinbase.svg";
-
 import mastercard from "./../img/payment/mastercard-ico.svg";
 import tronGreen from "./../img/payment/tron-green-ico.svg";
 import bitcoin from "./../img/payment/bitcoin-ico.svg";
 import tronRed from "./../img/payment/tron-red-ico.svg";
 import ethereum from "./../img/payment/ethereum-ico.svg";
 import binance from "./../img/payment/binance-ico.svg";
-import { Divider } from "../components/divider";
-import { useNavigate } from "react-router-dom";
-import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
-import { Alert, Loader } from "../components/load";
 
 const ReceivePage: FC = () => {
   const navigate = useNavigate();
@@ -28,13 +27,12 @@ const ReceivePage: FC = () => {
 
   // console.log("amount:", amount);
 
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
-    event.preventDefault();
+  const handleSubmit = async (paymentSystem: string) => {
     validateAll();
 
     const userData = {
       amount: Number(fields["amount"]),
-      paymentSystem: "Test",
+      paymentSystem: paymentSystem,
       status: "Receive",
     };
 
@@ -126,7 +124,7 @@ const ReceivePage: FC = () => {
             }`}
             type="button"
             disabled={disabled}
-            // onClick={() => handleSubmit("Stripe")}
+            onClick={() => handleSubmit("Stripe")}
           >
             <div className="payment__container">
               <div className="payment__wrapper">
@@ -151,7 +149,7 @@ const ReceivePage: FC = () => {
             }`}
             type="button"
             disabled={disabled}
-            // onClick={() => handleSubmit("Coinbase")}
+            onClick={() => handleSubmit("Coinbase")}
           >
             <div className="payment__container">
               <div className="payment__wrapper">

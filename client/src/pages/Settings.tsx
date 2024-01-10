@@ -103,7 +103,7 @@ const SettingsPage: FC = () => {
 
     const userData = {
       id: userId,
-      password: fields["password"],
+      password: fields["oldPassword"],
       newPassword: fields["newPassword"],
     };
 
@@ -226,9 +226,9 @@ const SettingsPage: FC = () => {
                 name="password"
                 label="Old password"
                 placeholder="Enter your old password"
-                value={fields["password"] || ""}
-                onChange={(value) => change("password", value)}
-                error={errors["password"]}
+                value={fields["oldPassword"] || ""}
+                onChange={(value) => change("oldPassword", value)}
+                error={errors["oldPassword"]}
               />
             </div>
 

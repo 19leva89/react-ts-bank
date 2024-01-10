@@ -2,12 +2,12 @@ import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/authProvider";
 import { saveSession } from "../script/session";
+import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import useForm from "./../script/form";
 
 import { Field } from "../components/field";
 import { ButtonBack } from "../components/button-back";
 import { FieldPassword } from "../components/field-password";
-import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { Alert, Loader } from "../components/load";
 
 const RecoveryConfirmPage: FC = () => {
@@ -94,7 +94,7 @@ const RecoveryConfirmPage: FC = () => {
             <FieldPassword
               name="password"
               label="New password"
-              placeholder="Enter your password"
+              placeholder="Enter your new password"
               value={fields["password"] || ""}
               onChange={(value) => change("password", value)}
               error={errors["password"]}
