@@ -9,11 +9,11 @@ const { Session } = require('./../class/session')
 
 
 User.create({
-	email: 'mail@gmail.com',
-	password: '123456',
+	email: 'test@gmail.com',
+	password: '123Ab456',
 })
 
-Confirm.create("mail@gmail.com")
+Confirm.create("test@gmail.com")
 
 // ================================================================
 

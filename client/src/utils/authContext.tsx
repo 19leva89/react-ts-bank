@@ -1,4 +1,4 @@
-import { FC, useReducer, ReactNode, createContext } from "react";
+import { useReducer, createContext } from "react";
 
 import { AUTH_ACTION_TYPE, AuthState, authInitialState, authReducer } from "./authReducer";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "./requestReducer";
@@ -17,10 +17,6 @@ interface AuthContextType {
   send: (updatedBalance: number) => void;
 }
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
 export const AuthContext = createContext<AuthContextType>({
   authState: authInitialState,
   isLogged: false,
@@ -34,7 +30,7 @@ export const AuthContext = createContext<AuthContextType>({
   send: () => {},
 });
 
-export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
+export const useAuthContext = () => {
   const [authState, dispatchAuth] = useReducer(authReducer, authInitialState);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
 
@@ -154,7 +150,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     addNotification(AUTH_ACTION_TYPE.SEND, Date.now(), "Announcement");
   };
 
-  const authContextData: AuthContextType = {
+  return {
     authState,
     isLogged,
     login,
@@ -166,9 +162,4 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     receive,
     send,
   };
-
-  // console.log(authState, isLogged);
-
-  return <AuthContext.Provider value={authContextData}>{children}</AuthContext.Provider>;
 };
-// console.log(AuthProvider);

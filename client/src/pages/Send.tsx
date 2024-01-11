@@ -1,6 +1,6 @@
 import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../utils/authProvider";
+import { AuthContext } from "../utils/authContext";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { getTokenSession } from "../script/session";
 import useForm from "./../script/form";

@@ -1,7 +1,7 @@
 import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { AuthContext } from "../utils/authProvider";
+import { AuthContext } from "../utils/authContext";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import useForm from "./../script/form";
 
@@ -15,7 +15,6 @@ const SettingsPage: FC = () => {
   const authContext = useContext(AuthContext);
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
   const { fields, errors, disabled, change, validateAll } = useForm();
 
   const handleSubmitChangeEmail = async (event: { preventDefault: () => void }) => {
@@ -151,7 +150,8 @@ const SettingsPage: FC = () => {
     try {
       dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-      logout();
+      authContext.logout();
+
       localStorage.removeItem("sessionAuth");
 
       dispatchRequest({ type: REQUEST_ACTION_TYPE.RESET });

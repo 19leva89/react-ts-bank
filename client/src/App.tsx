@@ -1,6 +1,6 @@
 import { FC, ReactNode, useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AuthContext, AuthProvider } from "./utils/authProvider";
+import { AuthContext, useAuthContext } from "./utils/authContext";
 
 import WelcomePage from "./pages/Home";
 import LoginPage from "./pages/Login";
@@ -40,8 +40,10 @@ const PrivateRoute: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 function App() {
+  const authContextData = useAuthContext();
+
   return (
-    <AuthProvider>
+    <AuthContext.Provider value={authContextData}>
       <BrowserRouter>
         <Routes>
           <Route
@@ -143,7 +145,7 @@ function App() {
           <Route path="*" Component={NotFound} />
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
+    </AuthContext.Provider>
   );
 }
 
