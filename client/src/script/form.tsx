@@ -17,8 +17,8 @@ const useForm = () => {
   const [fields, setFields] = useState<Fields>({});
   const [errors, setErrors] = useState<Errors>({});
   const [disabled, setDisabled] = useState<boolean>(true);
-  const [alertStatus, setAlertStatus] = useState<string>("");
-  const [alertText, setAlertText] = useState<string>("");
+  // const [alertStatus, setAlertStatus] = useState<string>("");
+  // const [alertText, setAlertText] = useState<string>("");
 
   const change = (name: string, value: any) => {
     setFields({ ...fields, [name]: value });
@@ -86,14 +86,14 @@ const useForm = () => {
     setDisabled(isDisabled);
   };
 
-  const setError = (name: string, error: string | null) => {
-    setErrors({ ...errors, [name]: error });
-  };
+  // const setError = (name: string, error: string | null) => {
+  //   setErrors({ ...errors, [name]: error });
+  // };
 
-  const setAlert = (status: string, text?: string) => {
-    setAlertStatus(status);
-    setAlertText(text || "");
-  };
+  // const setAlert = (status: string, text?: string) => {
+  //   setAlertStatus(status);
+  //   setAlertText(text || "");
+  // };
 
   return {
     fields,

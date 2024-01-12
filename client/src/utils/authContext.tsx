@@ -32,6 +32,8 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const useAuthContext = () => {
   const [authState, dispatchAuth] = useReducer(authReducer, authInitialState);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [requestState, dispatchRequest] = useReducer(requestReducer, requestInitialState);
 
   const isLogged = !!authState.token;
