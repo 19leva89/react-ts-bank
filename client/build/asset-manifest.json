@@ -1,0 +1,33 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ec40326c.css",
+    "main.js": "/static/js/main.fa4dbc10.js",
+    "static/media/background-safe.png": "/static/media/background-safe.3d7acdcad59898ad5c26.png",
+    "static/media/background.png": "/static/media/background.9fc1b7cec2fbe9fa613c.png",
+    "static/media/background-balance.png": "/static/media/background-balance.a5aec782f537cab63bb0.png",
+    "static/media/mastercard-ico.svg": "/static/media/mastercard-ico.68f46329923b713782a5748266c28250.svg",
+    "static/media/bitcoin-ico.svg": "/static/media/bitcoin-ico.a4c1a083da9595bd088ead861caf7fc8.svg",
+    "static/media/tron-green-ico.svg": "/static/media/tron-green-ico.80f44fd93875c38efe93ddfd9d935e96.svg",
+    "static/media/tron-red-ico.svg": "/static/media/tron-red-ico.638435cd2951e534a290308dd1cd8af2.svg",
+    "static/media/password-hide.svg": "/static/media/password-hide.515461ac279200001305.svg",
+    "static/media/notification-btn.svg": "/static/media/notification-btn.086126010d137a32f964f1ab06caa833.svg",
+    "static/media/button-back.svg": "/static/media/button-back.2741063a1e0f3f2fbc6c8cd563a896ed.svg",
+    "static/media/password-show.svg": "/static/media/password-show.1a74107a991e68b97103.svg",
+    "static/media/notification-ico.svg": "/static/media/notification-ico.8b3388359f9073cd98f5f87a93d2d2e5.svg",
+    "static/media/ethereum-ico.svg": "/static/media/ethereum-ico.05e6d9491781f2cb7885e591a39d5300.svg",
+    "static/media/danger-btn.svg": "/static/media/danger-btn.de0da4eed4882c96a04c339852a16df4.svg",
+    "static/media/binance-ico.svg": "/static/media/binance-ico.2308a2344e15a8b924141c2353ddafd0.svg",
+    "static/media/send.svg": "/static/media/send.2eefbc1ac60a269f60908283cbb41543.svg",
+    "static/media/settings.svg": "/static/media/settings.b19b54a3ac5929f9139d1a652d468559.svg",
+    "static/media/stripe.svg": "/static/media/stripe.a65d104949b9e251a0bc88c3d9b348b2.svg",
+    "index.html": "/index.html",
+    "static/media/coinbase.svg": "/static/media/coinbase.5d2e0a3b52ba065017215612b47d745a.svg",
+    "static/media/receive.svg": "/static/media/receive.88f504e9025567c3bbf7cfc5b78e28b8.svg",
+    "main.ec40326c.css.map": "/static/css/main.ec40326c.css.map",
+    "main.fa4dbc10.js.map": "/static/js/main.fa4dbc10.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ec40326c.css",
+    "static/js/main.fa4dbc10.js"
+  ]
+}
