@@ -1,6 +1,7 @@
 import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/authContext";
+import { BASE_URL } from "../utils/helper";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { getTokenSession } from "../script/session";
 import useForm from "./../script/form";
@@ -35,7 +36,7 @@ const SendPage: FC = () => {
         return;
       }
 
-      const res = await fetch("http://localhost:4000/user-send", {
+      const res = await fetch(`${BASE_URL}/user-send`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

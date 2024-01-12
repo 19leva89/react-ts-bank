@@ -2,6 +2,7 @@ import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../utils/authContext";
+import { BASE_URL } from "../utils/helper";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import useForm from "./../script/form";
 
@@ -40,7 +41,7 @@ const SettingsPage: FC = () => {
     try {
       dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-      const res = await fetch("http://localhost:4000/user-new-email", {
+      const res = await fetch(`${BASE_URL}/user-new-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,7 +110,7 @@ const SettingsPage: FC = () => {
     try {
       dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-      const res = await fetch("http://localhost:4000/user-new-password", {
+      const res = await fetch(`${BASE_URL}/user-new-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

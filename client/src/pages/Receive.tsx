@@ -1,5 +1,6 @@
 import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/helper";
 import { AuthContext } from "../utils/authContext";
 import { getTokenSession } from "../script/session";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
@@ -48,7 +49,7 @@ const ReceivePage: FC = () => {
         return;
       }
 
-      const res = await fetch("http://localhost:4000/user-receive", {
+      const res = await fetch(`${BASE_URL}/user-receive`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

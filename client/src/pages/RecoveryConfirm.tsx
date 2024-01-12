@@ -1,5 +1,6 @@
 import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/helper";
 import { AuthContext } from "../utils/authContext";
 import { saveSession } from "../script/session";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
@@ -32,7 +33,7 @@ const RecoveryConfirmPage: FC = () => {
     try {
       dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-      const res = await fetch("http://localhost:4000/recovery-confirm", {
+      const res = await fetch(`${BASE_URL}/recovery-confirm`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

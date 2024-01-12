@@ -1,6 +1,7 @@
 import { FC, useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import { getTokenSession } from "../script/session";
+import { BASE_URL } from "../utils/helper";
 import {
   requestReducer,
   requestInitialState,
@@ -54,7 +55,7 @@ const BalancePage: FC = () => {
           return;
         }
 
-        const res = await fetch("http://localhost:4000/user-balance", {
+        const res = await fetch(`${BASE_URL}/user-balance`, {
           headers: {
             Authorization: token,
           },
@@ -131,7 +132,7 @@ const BalancePage: FC = () => {
           return;
         }
 
-        const res = await fetch("http://localhost:4000/user-transactions", {
+        const res = await fetch(`${BASE_URL}/user-transactions`, {
           headers: {
             Authorization: token,
           },

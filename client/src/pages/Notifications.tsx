@@ -1,6 +1,7 @@
 import { FC, useEffect, useReducer } from "react";
 import { AUTH_ACTION_TYPE, authInitialState, authReducer } from "../utils/authReducer";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
+import { BASE_URL } from "../utils/helper";
 import { getTokenSession } from "../script/session";
 
 import { ButtonBack } from "../components/button-back";
@@ -25,7 +26,7 @@ const NotificationsPage: FC = () => {
           return;
         }
 
-        const res = await fetch("http://localhost:4000/user-notifications", {
+        const res = await fetch(`${BASE_URL}/user-notifications`, {
           headers: {
             Authorization: token, // Додавання токену до заголовків
           },

@@ -1,5 +1,6 @@
 import { useReducer, createContext } from "react";
 
+import { BASE_URL } from "./helper";
 import { AUTH_ACTION_TYPE, AuthState, authInitialState, authReducer } from "./authReducer";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "./requestReducer";
 import { getTokenSession } from "../script/session";
@@ -99,7 +100,7 @@ export const useAuthContext = () => {
         return;
       }
 
-      const res = await fetch("http://localhost:4000/user-notifications", {
+      const res = await fetch(`${BASE_URL}/user-notifications`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

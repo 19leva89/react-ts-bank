@@ -2,6 +2,7 @@ import { FC, useContext, useReducer } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { AuthContext } from "../utils/authContext";
+import { BASE_URL } from "../utils/helper";
 import { saveSession } from "../script/session";
 import useForm from "./../script/form";
 
@@ -29,7 +30,7 @@ const LoginPage: FC = () => {
     try {
       dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-      const res = await fetch("http://localhost:4000/login", {
+      const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
