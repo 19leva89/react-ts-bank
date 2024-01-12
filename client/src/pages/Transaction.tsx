@@ -1,5 +1,6 @@
 import { FC, useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";
+import { BASE_URL } from "../utils/helper";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { format } from "date-fns";
 
@@ -21,7 +22,7 @@ const TransactionPage: FC = () => {
       try {
         dispatchRequest({ type: REQUEST_ACTION_TYPE.PROGRESS });
 
-        const res = await fetch(`http://localhost:4000/user-transaction/${transactionId}`);
+        const res = await fetch(`${BASE_URL}/user-transaction/${transactionId}`);
 
         const data = await res.json();
 
