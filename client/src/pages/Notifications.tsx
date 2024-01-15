@@ -1,7 +1,7 @@
 import { FC, useEffect, useReducer } from "react";
 import { AUTH_ACTION_TYPE, authInitialState, authReducer } from "../utils/authReducer";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
-import { BASE_URL } from "../utils/helper";
+import { BASE_URL } from "../utils/url";
 import { getTokenSession } from "../script/session";
 
 import { ButtonBack } from "../components/button-back";

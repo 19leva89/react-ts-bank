@@ -2,7 +2,7 @@ import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../utils/authContext";
-import { BASE_URL } from "../utils/helper";
+import { BASE_URL } from "../utils/url";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import useForm from "./../script/form";
 

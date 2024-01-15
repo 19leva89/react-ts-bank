@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { saveSession } from "../script/session";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
-import { BASE_URL } from "../utils/helper";
+import { BASE_URL } from "../utils/url";
 import useForm from "./../script/form";
 
 import { Field } from "../components/field";

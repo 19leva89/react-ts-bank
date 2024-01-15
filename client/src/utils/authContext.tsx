@@ -1,6 +1,6 @@
 import { useReducer, createContext } from "react";
 
-import { BASE_URL } from "./helper";
+import { BASE_URL } from "./url";
 import { AUTH_ACTION_TYPE, AuthState, authInitialState, authReducer } from "./authReducer";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "./requestReducer";
 import { getTokenSession } from "../script/session";

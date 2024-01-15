@@ -1,6 +1,6 @@
 import { FC, useContext, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../utils/helper";
+import { BASE_URL } from "../utils/url";
 import { AuthContext } from "../utils/authContext";
 import { getTokenSession } from "../script/session";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";

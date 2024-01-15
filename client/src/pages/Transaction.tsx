@@ -1,6 +1,6 @@
 import { FC, useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";
-import { BASE_URL } from "../utils/helper";
+import { BASE_URL } from "../utils/url";
 import { REQUEST_ACTION_TYPE, requestInitialState, requestReducer } from "../utils/requestReducer";
 import { format } from "date-fns";
 

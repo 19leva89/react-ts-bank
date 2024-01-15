@@ -1,7 +1,7 @@
 import { FC, useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import { getTokenSession } from "../script/session";
-import { BASE_URL } from "../utils/helper";
+import { BASE_URL } from "../utils/url";
 import {
   requestReducer,
   requestInitialState,
