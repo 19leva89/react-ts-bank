@@ -39,8 +39,8 @@ jspm_packages/
 # Typescript v1 declaration files
 typings/
 
-# confidential environment variables
-.env
+# env files (can opt-in for committing if needed)
+.env*
 
 # Optional npm cache directory
 .npm
